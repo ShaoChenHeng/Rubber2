@@ -1,0 +1,61 @@
+<template>
+	<view>
+		<text @click="onClick" class="iconfont" :style="{fontSize: size + 'rpx',color:color}">{{name}}</text>
+	</view>
+	
+</template>
+
+<script>
+	//传&#x的icon, 转成\u icon
+	//template 直接使用&#x的icon 可以正确展示, 但是如果使用变量传&#x的icon 则展示失败
+	//template 中直接使用\u icon 或者使用\u icon变量 展示效果都正常
+	//如果使用props 传过来的\u icon 在template使用 显示失败, 传过来的 \u icon一被编码成字符串内存中的值其实是"\\ue715"
+	export default{
+		props: {
+			type: {
+				type: String,
+				default: ""
+			},
+			color: {
+				type: String,
+				default: "#FFFFFF"
+			},
+			size: {
+				type: Number,
+				default: 40
+			}
+		},
+		computed: {
+			name(){
+				let tmp = this.type;
+				tmp = '\\' + 'u' +  tmp.replace('&#x', '');
+				tmp = tmp.substring(0, tmp.length-1);
+				return  eval("'" + tmp + "'");               // 将内存中"\\ue715" 转成"\ue715"
+			}
+		},
+		data(){
+			return {
+				
+			}
+		}, 
+		created(){
+			
+		},
+		methods: {
+		    onClick() {
+		        this.$emit('click')
+		    } 
+		}  
+	}
+</script>
+
+<style>
+	.iconfont {  
+	    font-family: weexUiIconFont;  
+	}  
+	.iconlike {  
+	    width: 36px;  
+	    height: 36px;  
+	    font-size: 34px;  
+	}
+</style>
