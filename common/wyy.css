@@ -1,0 +1,31 @@
+.wyy-main-color {
+	background-color: rgba(218, 45, 30, 1);
+}
+
+.wyy-bg-color {
+	background-color: rgba(255, 255, 255, 1);
+}
+.wyy-refresh {
+	width: 750rpx;
+	align-items: center;
+}
+
+.wyy-indicator-text {
+	color: #888888;
+	font-size: 42rpx;
+	text-align: center;
+}
+
+.wyy-loading-indicator {
+	background-color: #FFFFFF;
+	padding: 15rpx;
+	border-radius: 50%;
+	height: 60rpx;
+	width: 60rpx;
+	color: #FF0000;
+}
+
+.wyy-loading {
+	width: 750rpx;
+	align-items: center;
+}
