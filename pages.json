@@ -1,25 +1,19 @@
 {
-	"name": "Rubber2",
-  "version": "1.0.0",
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
+	"pages": [{
+		"path": "pages/play/play",
+		"style": {
+			"app-plus": {
+				"titleNView": "false"
+					
+				
 			}
 		}
-	],
-	"repository": {
-    "type": "git",
-    "url": "https://github.com/shaochenheng/Rubber.git"
-  },
+	}],
+
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
-	},
-	"dependencies": {
-    "weex-ui": "^0.8.4"
-  },
+	}
 }

@@ -1,4 +1,7 @@
 const HOST = 'https://netease-cloud-music-api-teal-tau.vercel.app/';
+const systemInfo = uni.getSystemInfoSync();
+const status_bar_height = systemInfo.statusBarHeight;
+
 
 const API = {};
 
@@ -8,3 +11,11 @@ API.SONG = 'song/url'
 API.LYRIC = 'lyric';
 // 获取歌曲的详细信息
 API.SONG_DETAIL = 'song/detail';
+
+
+export default {
+	systemInfo, 
+	status_bar_height,
+	HOST,
+	API
+}

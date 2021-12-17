@@ -1,21 +1,17 @@
-import App from './App'
+import Vue from 'vue';
+import App from './App';
+import store from './store'
 
-// #ifndef VUE3
-import Vue from 'vue'
-Vue.config.productionTip = false
+
+Vue.config.productionTip = false;
+
 App.mpType = 'app'
+
+//重写toast, 将退出应用的提示拦截
+
+
 const app = new Vue({
-    ...App
+    ...App,
+	store
 })
 app.$mount()
-// #endif
-
-// #ifdef VUE3
-import { createSSRApp } from 'vue'
-export function createApp() {
-  const app = createSSRApp(App)
-  return {
-    app
-  }
-}
-// #endif

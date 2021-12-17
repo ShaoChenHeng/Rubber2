@@ -10,7 +10,7 @@ Song.get_song_url = function(id, cb) {
 		let data = res.data
 		if (data.code == 200) {
 		  cb && cb(data)
-		}else {
+		} else {
 			console.log('failed');
 		}
 	})
@@ -44,7 +44,7 @@ Song.get_song_detail = function(id, cb) {
 		if (data.code == 200) {
 			
 			cb && cb(data)
-		}else {
+		} else {
 			console.log('failed');
 		}
 	})
