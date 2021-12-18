@@ -1,8 +1,7 @@
 <template>
-	<view class="page">
+	<view class="page" :style="{backgroundImage: `linear-gradient(to top left,  ${bottomColor},${topColor},)`}">
 		<uni-transition :duration="300" :mode-class="mode_class" :styles="transfrom_class" :show="show_lyric">
 			<list v-if="!nolyric" class="lyric-list" show-scrollbar="false">
-				<cell class="top-area"></cell>
 				<cell @tap="change_container()" v-for="(row, index) in lyric" :key="index">
 					<view v-if="row.content" class="lyric-row">
 						<text :ref="`lyric${index}`" :class="active_lyric_row_index == row.index ? 'light-text' : ''"
@@ -36,14 +35,14 @@
 			</view>
 			<view class="top-bar-wrapper">
 				<view class="top-bar-option">
-					<view class="icon-area back" @tap="turn()">
+					<view class="icon-area back" @tap="getColor()">
 						<wyy-icon type="&#xe699;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
 					<text class="title-text"> hello </text>
 					<view class="icon-area details" @tap="next()">
 						<wyy-icon type="&#xe655;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
-					
+
 				</view>
 			</view>
 		</view>
@@ -107,9 +106,11 @@
 </template>
 
 <script>
+
 	import uniTransition from '@/components/uni-transition/uni-transition.vue'
 	import wyyIcon from '../../components/wyy-icon/wyy-icon.nvue';
 	import $repeater from '@/utils/repeater.js';
+	import analyze from 'rgbaster'
 
 	const animation = weex.requireModule('animation');
 	const dom = weex.requireModule('dom')
@@ -117,7 +118,7 @@
 	export default {
 		components: {
 			uniTransition,
-			wyyIcon
+			wyyIcon,
 		},
 		data() {
 			return {
@@ -129,12 +130,15 @@
 				picurl: '',
 				animation_timer: '',
 				deg: 0,
+				color:'',
 				dragging: false, //
 				show_lyric: false, //是否显示歌词
 				nolyric: true,
 				lyric: [],
+				picUrl: 'https://img2.baidu.com/it/u=3459879177,1824888153&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
 				active_lyric_row_index: 0,
-
+				topColor: 'rgba(122,233,212,0.8)',
+				bottomColor: 'rgba(245, 201, 141,0.8)',
 				mode_class: ['fade'],
 				transfrom_class: {
 					'position': 'fixed',
@@ -194,25 +198,49 @@
 		},
 		methods: {
 			_init() {
-				this.set_title('hello');
+				this.set_title(this.played.name);
 				this.get_lyric();
-
+				this.init_cover_rotate();
 				this.init_timer();
 				this.init_slider()
 			},
 			init_slider() {
-
+				setTimeout(() => {
+					this.duration = $repeater.player.get_duration().toFixed(0);
+					this.current_position = $repeater.player.get_position().toFixed(0);
+				}, 1000);
 			},
 
+			open_playlist() {
+				this.$refs.playlist_drawer.open_playlist();
+			},
 			change_play_mode() {
 				let mode_list = ['single', 'sequence', 'random'];
 				let current_mode = this.play_mode;
 				let index = mode_list.indexOf(current_mode);
 				let next_index = index + 1 > 2 ? 0 : index + 1;
 				let next_mode = mode_list[next_index];
-				// this.$store.commit('set_play_mode', next_mode);
+				this.$store.commit('set_play_mode', next_mode);
 			},
+			like(event) {
+				event.stopPropagation();
+				console.log(this.played.id);
 
+				$repeater.user.like(this.played.id, !this.islike, (res) => {
+					console.log(res);
+					let playlist = this.$store.state.likelist;
+					if (this.islike) {
+						let index = playlist.indexOf(this.played.id);
+						playlist.splice(index, 1);
+						console.log(index);
+					} else {
+						playlist.push(this.played.id);
+					}
+					console.log(playlist);
+					this.$store.commit('set_likelist', playlist);
+				})
+
+			},
 			set_active_lyric_row_index() {
 				if (this.nolyric) {
 					return;
@@ -248,13 +276,78 @@
 
 			},
 			get_lyric() {
-				return this.lyric[0];
+				$repeater.song.get_lyric(this.played.id, (data) => {
+
+					if (data.nolyric || !data.lrc.lyric) {
+						console.log('暂无歌词');
+						this.nolyric = true;
+						return;
+					}
+					let lyric = data.lrc.lyric;
+
+					let lines = lyric.split('\n');
+
+					let new_lyric = [];
+					lines.forEach((line, index) => {
+						let new_line = {};
+						if (!line) {
+							return
+						}
+						//哈哈哈,正则没写明白
+
+						let pattern = /\[\S*\]/g;
+						let time = line.match(pattern)[0];
+						let line_lyric = line.replace(time, '');
+
+						time = time.replace(/\[/, '');
+						time = time.replace(/\]/, '');
+
+						new_line.index = index;
+						new_line.time = time;
+						new_line.content = line_lyric.trim();
+						new_line.second = (time.split(":")[0] * 60 + parseFloat(time.split(":")[1]))
+							.toFixed(0);
+						new_lyric.push(new_line);
+					})
+
+					this.lyric = new_lyric;
+					console.log(this.lyric[0]);
+				});
 			},
 			change_container() {
 				this.show_lyric = !this.show_lyric;
 			},
+			init_cover_rotate() {
+				if (this.animation_timer) {
+					clearInterval(this.animation_timer);
+					this.animation_timer = '';
+				}
+				let cover_image = this.$refs.cover_image;
 
 
+				let degree = this.deg + 'deg';
+
+				this.animation_timer = setInterval(() => {
+					if (this.playing) {
+						this.deg += 20; //步进值
+					}
+
+					degree = this.deg + 'deg';
+					animation.transition(cover_image, {
+						styles: {
+							transform: 'rotate(' + degree + ')',
+							transformOrigin: 'center center'
+						},
+						duration: 1400, //ms
+						timingFunction: 'linear',
+						delay: 0 //ms
+					}, () => {
+
+
+					})
+				}, 1400);
+
+			},
 			set_title(title) {
 				uni.setNavigationBarTitle({
 					title: title
@@ -270,42 +363,115 @@
 				$repeater.player.seek_to(position);
 				this.dragging = false;
 			},
+			urlTobase64(url) {
+			  return new Promise((resolve, reject) => {
+			    uni.request({
+			      url: url,
+			      method: 'GET',
+			      responseType: 'arraybuffer',
+			      fail: error => {
+			        reject(error);
+			      },
+			      success: async res => {
+			        let base64 = uni.arrayBufferToBase64(res.data);
+			        base64 = 'data:image/jpeg;base64,' + base64;
+			        resolve(base64);
+			      }
+			    })
+			  })
+			},
+			get_size(base64) {
+			    //确认处理的是png格式的数据
+			    if (base64.substring(0,22) === 'data:image/png;base64,') {
+			        // base64 是用四个字符来表示3个字节
+			        // 我们只需要截取base64前32个字符(不计开头那22个字符)便可（24 / 3 * 4）
+			        // 这里的data包含12个字符，9个字节，除去第1个字节，后面8个字节就是我们想要的宽度和高度
+			        const data = base64.substring(22 + 20, 22 + 32); 
+			        const base64Characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+			        const nums = [];
+			        for (const c of data) {
+			            nums.push(base64Characters.indexOf(c));
+			        }
+			        const bytes = [];
+			        for(let i = 0; i < nums.length; i += 4) {
+			            bytes.push((nums[i] << 2) + (nums[i+1] >> 4));
+			            bytes.push(((nums[i+1] & 15) << 4) + (nums[i+2] >> 2));
+			            bytes.push(((nums[i+2] & 3) << 6) + nums[i+3]);
+			        }
+			        const width = (bytes[1] << 24) + (bytes[2] << 16) + (bytes[3] << 8) + bytes[4];
+			        const height = (bytes[5] << 24) + (bytes[6] << 16) + (bytes[7] << 8) + bytes[8];
+			        return {
+			            width,
+			            height,
+			        };
+			    }
+			    throw Error('unsupported image type');
+			},
+			async get_rgb(img) {
+				await analyze.colors(img, {
+				  success: function(payload) {
+					// You now have the payload.
+					// payload.dominant是主色，RGB形式表示
+					// payload.secondary是次色，RGB形式表示
+					// payload.palette是调色板，含多个主要颜色，数组
+					console.log(payload.dominant);
+					console.log(payload.secondary);
+					console.log(payload.palette);
+				  }
+				});
+			},
 			turn() {
 				//切换播放暂停状态
+				this.get_rgb(this.picUrl);
 				$repeater.player.turn();
 			},
 			stop_rotate() {
 
 			},
 			init_timer() {
+				if (this.timer) {
+					clearInterval(this.timer);
+					this.timer = '';
+				}
+				this.timer = setInterval(() => {
+					// console.log(this.lyric[this.active_row_lyric][2]);
+					if (!this.dragging) {
+						this.current_position = $repeater.player.get_position().toFixed(0);
 
+						if (this.show_lyric) {
+							this.set_active_lyric_row_index();
+						}
 
+					}
+				}, 1000);
 			},
 			next() {
 				console.log('下一曲');
-				this.getImage();
+				this.get_color();
 				// this.$refs.playlist_drawer.next_song();
 			},
 			prev() {
 				console.log('上一曲');
+				this.get_color();
 				// this.$refs.playlist_drawer.prev_song();
 			},
-		
-	},
-}
-	// atest color is background: #30A0FF;
+			download() {
+
+			}
+		},
+
+	}
+	// a test color is background: #30A0FF;
+	// :style="{'background':'#5d5d5d'}"
 </script>
 
 <style>
 	.page {
 		flex: 1;
-		background:#5d5d5d;
-	}
-
-	.background-pic {
-
-		
-		flex: 1;
+		background-image: (
+		          rgba(0, 0, 0, 0.7), 
+		          rgba(0, 0, 0, 0.7)
+		        )
 	}
 
 	.status_bar {
@@ -322,10 +488,8 @@
 	}
 
 	.top-bar-wrapper {
-
 		width: 750rpx;
 		align-items: center;
-
 	}
 
 	.title-text {
@@ -346,9 +510,9 @@
 
 	.container {
 		top: 100;
-		background: #30A0FF;
 		height: 900rpx;
 		width: 650rpx;
+		
 	}
 
 	.cover {
@@ -418,7 +582,7 @@
 
 	.end_time {
 		width: 55rpx;
-		
+
 
 	}
 
@@ -492,7 +656,7 @@
 	}
 
 	.bottom-icon-group {
-		
+
 		flex-direction: row;
 		margin-right: 45rpx;
 	}
