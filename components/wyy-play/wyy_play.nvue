@@ -1,0 +1,150 @@
+<template>
+	<view class="play" v-if="played"
+	:style="{backgroundImage: `linear-gradient(to bottom right, ${colorList[color[0]]},${colorList[color[1]]},)`}">
+		<view class="play-left" @tap="to_play_page()">
+			<image class="cover-image"  resize="cover" :src="played.cover_image + '?param=100y100'"></image>
+		</view>
+		<view class="play-center" @tap="to_play_page()">
+			<text class="music-name">{{played.name}}</text>
+			<text class="creator-nickname">{{played.creator}}</text>
+		</view>
+		
+		<view class="play-right">
+			<view class="handle-icon" @tap="turn($event)" >
+				<!-- <wyy-icon type="&#xe677;" size="50" color="#000000" ></wyy-icon> -->
+				<wyy-icon :type="playing ? '&#xe672;' : '&#xe677;'" size="55" color="#FFFFFF" ></wyy-icon>
+			</view>
+			<view class="handle-icon" @tap="open_playlist($event)">
+				<wyy-icon type="&#xe671;" size="45" color="#FFFFFF" ></wyy-icon>
+			</view>
+		</view>
+		
+		<playlist-drawer ref="playlist_drawer"></playlist-drawer>
+	</view>
+</template>
+
+<script>
+	import wyyIcon from '../../components/wyy-icon/wyy-icon.nvue';
+	import playlistDrawer from '@/components/playlist_drawer.nvue';
+	import $repeater from '@/utils/repeater.js';
+	
+	export default {
+		components: {
+			wyyIcon,
+			playlistDrawer
+		},
+		data() {
+			return {
+				colorList: [
+					'#336699','#FF0033','#99CC99',
+					'#333333','#FFCC00','#CCCCFF',
+					'#333366','#339966','#666666',
+					'#993333','#000000','#003366',
+					'#CC9933','#FF99CC','#990033',
+				],
+			};
+		},
+		computed: {
+			color() {
+				var num1 = Math.round(Math.random()*this.colorList.length)
+				var num2 = Math.round(Math.random()*this.colorList.length)
+				while (num2 === num1) {
+					num2 = Math.round(Math.random()*this.colorList.length)
+				}
+				return [num1, num2]
+			},
+			playing() {
+				return this.$store.state.playing;
+			},
+			played() {
+				return this.$store.state.played;
+			}
+		},
+		watch: {
+			
+		},
+		created() {
+			
+		},
+		methods: {
+			open_playlist(event) {
+				event.stopPropagation();
+				this.$refs.playlist_drawer.open_playlist();
+			},
+			to_play_page() {
+				$repeater.helper.to('../play/play');
+			},
+			turn(event) {
+				//切换播放暂停状态
+				event.stopPropagation();
+				$repeater.player.turn();
+			},
+		},
+	}
+</script>
+
+<style>
+	.play {
+		width: 750rpx;
+		height: 120rpx;
+		border-top-color: rgba(0, 0, 0, .1);
+		border-top-width: 1rpx;
+		border-top-color: linear-gradient(to bottom right, rgba(39, 75, 166, 1.0), rgba(68, 68, 68, 1.0) );;
+		border-top-style: solid;
+		flex-direction: row;
+		border-radius: 5;
+		/*
+		background-image: linear-gradient(to bottom right, rgba(39, 75, 166, 1.0), rgba(68, 68, 68, 1.0) );
+		 position: fixed;
+		bottom: 0;
+		left: 0; */
+	}
+	.play:active {
+		background-color: rgba(0,0,0,0.1);
+	}
+	.play-left {
+		width: 120rpx;
+		justify-content: center;
+		align-items: center;
+		
+		padding: 0 10rpx;
+	}
+	.play-right {
+		flex-direction: row;
+		width: 150rpx;
+		margin-right:30rpx;
+	}
+	.handle-icon {
+		width: 70rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.play-center {
+		width: 480rpx;
+		height: 90rpx;
+		justify-content: center;
+	}
+	.cover-image {
+		width: 90rpx;
+		height: 90rpx;
+		border-radius: 5;
+		margin-left: 15rpx;
+		
+	}
+	.music-name {
+		margin-left: 25rpx;
+		margin-top: 24rpx;
+		margin-bottom: 10rpx;
+		font-size: 25rpx;
+		font-weight: bold;
+		color: #FFFFFF;
+	}
+	.creator-nickname {
+		font-size: 25rpx;
+		margin-left: 25rpx;
+		color: rgba(255, 255, 255, .6);
+		margin-top: 10rpx;
+		
+	}
+</style>
