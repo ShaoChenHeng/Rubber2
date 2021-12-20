@@ -1,0 +1,149 @@
+<template>
+	<view class="music" @tap="play">
+		
+			<view class="cover">
+				<image class="cover-image"  :src="song.picUrl + '?param=100y100'"></image>
+			</view>
+			<view class="song-details">
+				<text class="music-name">{{song.name}}</text>
+				<view class="music-creators">
+					<text class="music-creator" v-for="(creator, c_index) in song.artists" :key="c_index">{{creator.name + ' '}}</text>
+					<text class="music-al">- {{song.album_name}}</text>
+
+				</view>
+			</view>
+
+		<view class="handle-area" v-if="false">
+			
+		</view>
+	</view>
+</template>
+
+<script>
+	import $repeater from '@/utils/repeater.js';
+	export default {
+		props: {
+			song: {
+				type: Object,
+				default: {
+					
+				}
+			},
+			number: {
+				type: Number,
+				default: 0
+			},
+			show_number: {
+				type: Boolean,
+				default: true,
+			},
+			playlist_id: {
+				type: Number,
+				default: 0
+			}
+			
+		},
+		data() {
+			return {
+				picUrl:'https://www.otaquest.com/wp-content/uploads/2020/03/Jacket.jpg',
+			};
+		},
+		computed: {
+			played: function() {
+				return this.$store.state.played;
+			}
+		},
+		methods: {
+			// 播放
+			// 如果选中歌曲和底部播放组件是同一首歌, 则跳转到播放页并开始播放
+			// 如果不同, 则开始播放新选中的歌曲, 更新播放组件信息, 不跳转
+			play() {
+				let song_id = this.song.id;
+				$repeater.player.start(song_id, (played)=> {
+					played && this.$store.commit('set_played', played);
+				})
+				
+				// 获取相同歌单下的歌曲生成一个播放列表, 如何没有指定歌单id, 那么仅将此首歌push到播放列表中
+				
+				if (this.playlist_id) {
+					let playlist_id = this.playlist_id;
+					$repeater.playlist.get_playlist_detail(playlist_id, (data)=> {
+						let playlist = data.playlist;
+						
+						let format_songs = [];
+						playlist.tracks.forEach((song)=> {
+							let format_song = {};
+							format_song.id = song.id;
+							format_song.name = song.name;
+							format_song.artists = song.ar;
+							format_song.album_name = song.al.name;
+							format_songs.push(format_song);
+						})
+						this.$store.commit('set_current_playlist', format_songs);
+					});
+				}else {
+					// 不存在playlist_id, 则直接将此歌曲插入到播放列表中
+					let song = this.song;
+					let format_song = {};
+					format_song.id = song.id;
+					format_song.name = song.name;
+					format_song.artists = song.artists;
+					format_song.album_name = song.album_name;
+					
+					this.$store.commit('push_current_playlist', format_song);
+				}
+				
+			},
+		},
+	}
+</script>
+
+<style>
+	.music {
+		flex-direction: row;
+		width: 750rpx;
+		height: 140rpx;
+		background-color: #121212;
+	}
+	.music:active{
+		opacity: 0.9;
+	}
+	.cover {
+		width: 140rpx;
+		justify-content: center;
+		align-items: center;
+		padding: 0 5rpx;
+		margin-left: 15rpx;	
+	}
+	.cover-image {
+		width: 110rpx;
+		height: 110rpx;
+		margin-left: 15rpx;	
+	}
+	
+
+	.song-details {
+		margin-left: 25rpx;
+		flex-direction: column;
+		margin-top: 30rpx;
+	}
+	.music-name {
+		font-size: 30rpx;
+		font-weight: bold;
+		margin-bottom: 20rpx;	
+		color: #FFFFFF;
+	}
+	.music-creators {
+		flex-direction: row;
+		text-overflow: ellipsis;
+		color: rgba(255, 255, 255, .6);
+	}
+	.music-creator {
+		font-size: 25rpx;
+		color: rgba(255, 255, 255, .6);
+	}
+	.music-al {
+		font-size: 25rpx;
+		color: rgba(255, 255, 255, .6);
+	}
+</style>
