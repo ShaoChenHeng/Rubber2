@@ -1,6 +1,7 @@
 <template>
-	<view class="play" v-if="played"
-	:style="{backgroundImage: `linear-gradient(to bottom right, ${colorList[color[0]]},${colorList[color[1]]},)`}">
+	<view class="play">
+	<view class="play1" v-if="played"
+	:style="{backgroundImage: `linear-gradient(to bottom right, ${colorList[color]}, #222222,)`}">
 		<view class="play-left" @tap="to_play_page()">
 			<image class="cover-image"  resize="cover" :src="played.cover_image + '?param=100y100'"></image>
 		</view>
@@ -21,6 +22,7 @@
 		
 		<playlist-drawer ref="playlist_drawer"></playlist-drawer>
 	</view>
+	</view>
 </template>
 
 <script>
@@ -37,8 +39,8 @@
 			return {
 				colorList: [
 					'#336699','#FF0033','#99CC99',
-					'#333333','#FFCC00','#CCCCFF',
-					'#333366','#339966','#666666',
+					'#121212','#FFCC00','#CCCCFF',
+					'#333366','#339966','#404c9e',
 					'#993333','#000000','#003366',
 					'#CC9933','#FF99CC','#990033',
 				],
@@ -46,12 +48,8 @@
 		},
 		computed: {
 			color() {
-				var num1 = Math.round(Math.random()*this.colorList.length)
-				var num2 = Math.round(Math.random()*this.colorList.length)
-				while (num2 === num1) {
-					num2 = Math.round(Math.random()*this.colorList.length)
-				}
-				return [num1, num2]
+				var num1 = Math.round(Math.random()*this.colorList.length);
+				return num1;
 			},
 			playing() {
 				return this.$store.state.playing;
@@ -84,15 +82,23 @@
 </script>
 
 <style>
-	.play {
+	.play{
+		background-color: #121212;
 		width: 750rpx;
 		height: 120rpx;
-		border-top-color: rgba(0, 0, 0, .1);
+		border-top-color: rgba(18, 18, 18, .1);
 		border-top-width: 1rpx;
-		border-top-color: linear-gradient(to bottom right, rgba(39, 75, 166, 1.0), rgba(68, 68, 68, 1.0) );;
 		border-top-style: solid;
+		justify-content: center;
+		align-items: center;
+		
+	}
+	.play1 {
+		
+		width: 720rpx;
+		height: 120rpx;
 		flex-direction: row;
-		border-radius: 5;
+		border-radius: 7;
 		/*
 		background-image: linear-gradient(to bottom right, rgba(39, 75, 166, 1.0), rgba(68, 68, 68, 1.0) );
 		 position: fixed;
@@ -121,7 +127,7 @@
 	}
 	
 	.play-center {
-		width: 480rpx;
+		width: 450rpx;
 		height: 90rpx;
 		justify-content: center;
 	}
@@ -129,8 +135,7 @@
 		width: 90rpx;
 		height: 90rpx;
 		border-radius: 5;
-		margin-left: 15rpx;
-		
+		margin-left: 15rpx;	
 	}
 	.music-name {
 		margin-left: 25rpx;
