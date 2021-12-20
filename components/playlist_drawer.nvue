@@ -75,8 +75,8 @@
 					played && this.$store.commit('set_played', played);
 				})
 			},
-			next_song() {
-				$repeater.player.next((played)=> {
+			next_song(play_mode) {
+				$repeater.player.next(play_mode, (played)=> {
 					played && this.$store.commit('set_played', played);
 				})
 			},

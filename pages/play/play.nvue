@@ -102,6 +102,7 @@
 			</view>
 		</view>
 		<playlist-drawer ref="playlist_drawer"></playlist-drawer>
+
 	</view>
 </template>
 
@@ -128,7 +129,6 @@
 				picurl: '',
 				animation_timer: '',
 				deg: 0,
-				color: '',
 				title: '',
 				dragging: false, //
 				show_lyric: false, //是否显示歌词
@@ -298,8 +298,6 @@
 						if (!line) {
 							return
 						}
-						//哈哈哈,正则没写明白
-
 						let pattern = /\[\S*\]/g;
 						let time = line.match(pattern)[0];
 						let line_lyric = line.replace(time, '');
@@ -347,7 +345,6 @@
 					this.timer = '';
 				}
 				this.timer = setInterval(() => {
-					// console.log(this.lyric[this.active_row_lyric][2]);
 					if (!this.dragging) {
 						this.current_position = $repeater.player.get_position().toFixed(0);
 
@@ -360,8 +357,7 @@
 			},
 			next() {
 				console.log('下一曲');
-
-				this.$refs.playlist_drawer.next_song();
+				this.$refs.playlist_drawer.next_song(this.play_mode);
 			},
 			prev() {
 				console.log('上一曲');
@@ -476,6 +472,7 @@
 	.slider-view-bottom {
 		width: 620rpx;
 		height: 20rpx;
+		margin-left: 25rpx;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
@@ -483,12 +480,11 @@
 
 	.slider {
 		width: 20rpx;
-		margin-left: 35rpx;
+		
 	}
 
 	.current_time {
 		width: 55rpx;
-		align-items: flex-end;
 	}
 
 	.end_time {
