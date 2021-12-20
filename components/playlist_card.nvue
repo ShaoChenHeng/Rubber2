@@ -6,7 +6,7 @@
 		
 		<view class="music-list-bottom">
 			<text class="music-list-name">{{playlist.name}}</text>
-			<text class="number">{{playlist.trackCount}}首 by {{playlist.creator.nickname}}</text>
+			<!-- <text class="number">{{playlist.trackCount}}首 by {{playlist.creator.nickname}}</text> -->
 		</view>
 		
 	</view>
