@@ -105,6 +105,7 @@
 		<!-- 搜索结果页END -->
 		
 		<wyy-play v-if="played"></wyy-play>
+		<BottomBar> </BottomBar>
 	</view>
 </template>
 
@@ -115,7 +116,7 @@
 	import songCard from '../../components/song_card.nvue';
 	import playlistCard from '../../components/playlist_card.nvue';
 	import $repeater from '@/utils/repeater.js';
-	
+	import BottomBar from '@/components/BottomBar.nvue';
 	
 	export default {
 		components: {
@@ -123,7 +124,8 @@
 			wyyPlay,
 			songCard,
 			playlistCard,
-			wyyIcon
+			wyyIcon,
+			BottomBar
 		},
 		data() {
 			return {
@@ -150,7 +152,7 @@
 				mode_class: ['fade'],
 				transfrom_class: {
 					'position': 'fixed',
-					'bottom': '115rpx',
+					'bottom': '265rpx',
 					'top': 0,
 					'left': 0,
 					'right': 0,
