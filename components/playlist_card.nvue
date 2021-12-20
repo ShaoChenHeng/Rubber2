@@ -1,0 +1,83 @@
+<template>
+	<view class="music-list" @tap="to_playlist">
+		<view class="music-list-top">
+			<image class="cover-image" :src="playlist.coverImgUrl + '?param=330y330'"></image>
+		</view>
+		
+		<view class="music-list-bottom">
+			<text class="music-list-name">{{playlist.name}}</text>
+			<text class="number">{{playlist.trackCount}}首 by {{playlist.creator.nickname}}</text>
+		</view>
+		
+	</view>
+</template>
+
+<script>
+	import $repeater from '@/utils/repeater.js';
+	export default {
+		props: {
+			playlist: {
+				type: Object,
+				default: {
+					
+				}
+			}
+		},
+		data() {
+			return {
+				
+			};
+		},
+		methods: {
+			to_playlist() {
+				let playlist = this.playlist;
+				$repeater.helper.to('/pages/playlist/playlist?playlist_id=' + playlist.id + '&cover_image=' + playlist.coverImgUrl + '&name=' + playlist.name);
+			}
+		},
+	}
+</script>
+
+<style>
+	.music-list{
+		flex-direction: column;
+		align-items: center;
+		/* justify-content: space-between; */
+		height: 470rpx;
+		width: 375rpx;
+		margin-bottom: 30rpx;
+		padding-left: 30rpx;
+		padding-right: 30rpx;
+	}
+	.cover-image{
+		
+		height: 330rpx;
+		width: 330rpx;
+	}
+	.music-list-top {
+		
+		height: 330rpx;
+		width: 330rpx;
+	}
+	.music-list-bottom{
+		flex-direction: column;
+		justify-content: space-between;
+		padding-top: 15rpx;
+		width: 330rpx;
+	}
+
+	.music-list-name{
+		text-align:center;
+		font-size: 30rpx;
+		font-weight: bold;
+		color: #FFFFFF;
+		padding-bottom: 15rpx;
+	}
+	.number{
+		text-align:center;
+		font-size: 29rpx;
+		color: rgba(255, 255, 255, .6);
+	}
+	.music-list:active{
+		background-color: rgba(0,0,0,0.1);
+	}
+</style>
