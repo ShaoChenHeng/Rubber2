@@ -19,7 +19,7 @@
 			</view>
 			<list style="flex: 1;" show-scrollbar="false">
 				<cell class="song-cell" v-for="(song, index) in playlist" :key="index" @tap="play(song.id)" :ref="`song${song.id}`">
-					<view style="flex-direction: row;"  >
+					<view class="song-line">
 						<wyy-icon  v-if="song.id == played.id" type="&#xe67f;" size="35" color="#f0686f" ></wyy-icon>
 						<view>
 							<text :class="song.id == played.id ? 'active-song-name' : 'song-name'" >{{song.name}}</text>
@@ -105,6 +105,7 @@
 					this.$refs.showpopup.close();
 				})
 			},
+			
 			open_playlist() {
 				this.$nextTick(() => {
 					this.$refs.showpopup.open();
@@ -186,5 +187,8 @@
 		color: rgba(255, 255, 255, .6);
 		font-size: 25rpx;
 	}
-	
+	.song-line {
+		flex-direction: row;
+		width: 650rpx;
+	}
 </style>
