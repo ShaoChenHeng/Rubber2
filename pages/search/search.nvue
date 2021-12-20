@@ -1,0 +1,450 @@
+<template>
+	<view class="page">
+		<view style="flex: 1;">
+			<uni-transition :duration="200" :mode-class="mode_class" :styles="transfrom_class" :show="!show_result">
+				<list v-if="!show_result" show-scrollbar="false" class="content search-page">
+					<cell class="title" v-if="false">
+						<text class="title-text">历史记录</text>
+					</cell>
+					<cell class="search-history"></cell>
+					<cell class="title">
+						<text class="title-text">热搜榜</text>
+					</cell>
+					<cell class="hot-item" v-for="(item, index) in hot_list" :key="index" @tap="hot_search(item)">
+						<view class="hot-item-index">
+							<text class="index-text">{{index + 1}}</text>
+						</view>
+						<view class="hot-info">
+							<text class="key_word">{{item.searchWord}}</text>
+							<text class="description">{{item.content}}</text>
+						</view>
+					</cell>
+				</list>
+			</uni-transition>
+			
+			<!-- 搜索页END -->
+			
+			<!-- 搜索结果页 -->
+			<uni-transition :duration="200" :mode-class="mode_class" :styles="transfrom_class" :show="show_result">
+				
+				<view class="content result-page">
+					<scroll-view scroll-with-animation="true" class="scroll-bar-view" :scroll="false" :scroll-x="true" :show-scrollbar="false" :scroll-into-view="current_scroll_into">
+						<view class="scroll-bar" >
+							<view class="bar-name" v-for="(item, bar_index) in result_bars" :key="bar_index" @tap="on_tab_tap(bar_index)" :id="item.id">
+								<button :class="current_bar_index == bar_index ? 'active-button' : ''" class="button-name-text">
+									<text :class="current_bar_index == bar_index ? 'active-bar' : ''" class="bar-name-text">{{item.name}}</text>
+								</button >
+							</view>
+						</view>
+					</scroll-view>
+					
+					<swiper class="bar-box" :current="current_bar_index" skip-hidden-item-layout @change="tab_changed">
+						<swiper-item v-for="(page, index) in result_bars" :key="index" >
+			
+							<!-- 综合 -->
+							<list v-if="page.id == 1018" show-scrollbar="false" style="flex: 1;">
+								<cell v-for="(value, key, t_index) in comprehensive_data" :key="t_index">
+									<view v-if="key == 'song'">
+										<view class="title">
+											<text class="title-text">单曲</text>
+										</view>
+										
+										<song-card :show_number="false"  v-for="(song, s_index) in value.songs" :song="song" :key="s_index"></song-card>
+										
+									</view>
+									<view v-if="key == 'playList'">
+										<view class="title">
+											<text class="title-text">歌单</text>
+										</view>
+										<view class="playlist-container">
+											<playlist-card v-for="(playlist, p_index) in value.playLists" :key="p_index" :playlist="playlist"></playlist-card>
+										</view>
+									</view>
+									
+								</cell>
+							</list>
+							<!-- 综合END -->
+							
+							<!-- 单曲 -->
+							
+							<list show-scrollbar="false" style="flex: 1;" v-else-if="page.id == 1">
+								<cell v-for="(value, key, t_index) in comprehensive_data" :key="t_index">
+									<view v-if="key == 'song'">
+										<song-card :show_number="false"  v-for="(song, s_index) in value.songs" :song="song" :key="s_index"></song-card>
+									</view>
+								</cell>
+							</list>
+							<!-- 单曲END -->
+							
+							<!-- 歌单 -->
+							
+							<list show-scrollbar="false" style="flex: 1;" v-else-if="page.id == 1000">
+								<cell>
+								<view class="playlist-container">
+									<playlist-card v-for="(playlist, p_index) in playlist_data" :key="p_index" :playlist="playlist"></playlist-card>
+								</view>
+								</cell>		
+									<!-- <playlist-card v-for="(playlist, p_index) in playlist_data" :key="p_index" :playlist="playlist"> </playlist-card> -->
+							</list>
+							<!-- 歌单END -->
+							
+							<list v-else>
+								<cell>
+									未完成
+								</cell>
+							</list>
+							
+						</swiper-item>
+					</swiper>
+				</view>
+			</uni-transition>
+		</view>
+		<!-- 搜索页 -->
+		
+		
+		<!-- 搜索结果页END -->
+		
+		<wyy-play v-if="played"></wyy-play>
+	</view>
+</template>
+
+<script>
+	import uniTransition from '@/components/uni-transition/uni-transition.vue'
+	import wyyPlay from '@/components/wyy-play/wyy_play.nvue';
+	import wyyIcon from '../../components/wyy-icon/wyy-icon.nvue';
+	import songCard from '../../components/song_card.nvue';
+	import playlistCard from '../../components/playlist_card.nvue';
+	import $repeater from '@/utils/repeater.js';
+	
+	
+	export default {
+		components: {
+			uniTransition,
+			wyyPlay,
+			songCard,
+			playlistCard,
+			wyyIcon
+		},
+		data() {
+			return {
+				hot_list: [],
+				show_result: false,
+				
+				result_bars: [
+					{id: 1018, name: '综合', key: 'comprehensive'},
+					{id: 1, name: '单曲', key: 'song'},
+					// {id: 1014, name: '视频', key: 'mv'},
+					// {id: 100, name: '歌手', key: 'artist'},
+					// {id: 10, name: '专辑', key: 'album'},
+					{id: 1000, name: '歌单', key: 'playlist'},
+					// {id: 1009, name: '主播电台', key: 'dj'},
+					// {id: 1002, name: '用户', key: 'user'},
+				],
+				
+				current_keyword: '',
+				current_search_result: {},
+				current_page: 0,
+				current_bar_index: 0,
+				current_scroll_into: '',
+				
+				mode_class: ['fade'],
+				transfrom_class: {
+					'position': 'fixed',
+					'bottom': '115rpx',
+					'top': 0,
+					'left': 0,
+					'right': 0,
+					'justify-content': 'center',
+					'align-items': 'center',
+					'border-bottom-color': 'rgba(0, 0, 0, .1)',
+					'border-bottom-width': '5rpx',
+					
+					'border-top-style': 'solid',
+				}
+			}
+		},
+		watch: {
+			current_bar_index(index, old_index) {
+				if (!this.show_result) {
+					return;
+				}
+				if (!this.current_search_result[this.result_bars[index].key]) {
+					this.search();
+				}
+				
+			}
+		},
+		computed: {
+			played: function() {
+				return this.$store.state.played;
+			},
+			playlist_data() {
+				if (!this.search_result_init_check('playlist')) {
+					return;
+				}
+				
+				let playlists = this.current_search_result.playlist.playlists;
+				let new_playlists = [];
+				playlists.forEach((playlist)=> {
+					let tmp_playlist = {};
+					tmp_playlist.id = playlist.id;
+					tmp_playlist.coverImgUrl = playlist.coverImgUrl;
+					tmp_playlist.name = playlist.name;
+					tmp_playlist.trackCount = playlist.trackCount;
+					tmp_playlist.creator = playlist.creator;
+					new_playlists.push(tmp_playlist);
+				});
+				return new_playlists;
+			},
+			comprehensive_data() {
+				
+				if (!this.search_result_init_check('comprehensive')) {
+					return;
+				}
+				
+				let comprehensive = this.current_search_result.comprehensive;
+				
+				if (comprehensive.song.songs) { //format songs信息
+					comprehensive.song.songs.forEach((song)=> {
+						song.id = song.id;
+						song.name = song.name;
+						song.artists = song.ar;
+						song.album_name = song.al.name;
+						song.picUrl = song.al.picUrl;
+					})
+				}
+				return comprehensive
+			},
+			songs_data:  function() {
+				
+				if (!this.search_result_init_check('song')) {
+					return;
+				}
+				
+				if (this.current_search_result.song.songCount == 0) {
+					return;
+				}
+				let songs = this.current_search_result.song.songs;
+				console.log('hello')
+				let format_songs = [];
+				songs.forEach((song)=> {
+					let format_song = {};
+					format_song.id = song.id;
+					format_song.name = song.name;
+					format_song.artists = song.artists;
+					format_song.album_name = song.album.name;
+					format_songs.push(format_song);
+				})
+				
+				return format_songs;
+			}
+		},
+		onBackPress() {
+			// 如果当前显示的是搜索结果页, 则拦截返回事件, 并关闭结果页
+			if (this.show_result) {
+				this.close_result_page();
+				return true;
+			}
+		},
+		created() {
+			uni.$on('search', this.on_search);
+			this.get_hot_list()
+		},
+		beforeDestroy() {
+			uni.$off('search');
+		},
+		methods: {
+			//检查是否可以正常展示搜索结果相关的内容
+			search_result_init_check(module) {
+				console.log(module);
+				if (!this.current_keyword) { //没有搜索关键词
+					return false;
+				}
+				if (!this.current_search_result[module]) { //对应模块没有加载好数据
+					return false;
+				}
+				
+				if (Object.keys(this.current_search_result[module]).length === 0) {
+					return false;
+				}
+				return true;
+			},
+			on_search(e) {
+				this.set_keyword(e.keyword);
+			},
+			set_keyword(keyword) {
+				console.log(keyword);
+				this.current_keyword = keyword;
+				this.open_result_page();
+			},
+			on_tab_tap(index) {
+				console.log(this.current_bar_index);
+				console.log(index);
+				this.switch_tab(index);
+			},
+			tab_changed(e) {
+				this.switch_tab(e.detail.current);
+			},
+			switch_tab(index) {
+				this.current_bar_index = index;
+				this.current_scroll_into = this.result_bars[index].id;
+			},
+			hot_search(hot) {
+				this.set_keyword(hot.searchWord);
+			},
+			
+			search() {
+				
+				let keyword = this.current_keyword;
+				
+				let index = this.current_bar_index;
+				let type = this.result_bars[index].id
+				let page = this.current_page;
+				$repeater.search.search(keyword, type, page, (data)=> {
+					this.$set(this.current_search_result, this.result_bars[index].key, data.result);
+				});
+			},
+			close_result_page() {
+				this.show_result = false; //关闭结果页
+				this.current_keyword = '';
+				this.current_search_result = {};
+				this.current_page = 0;
+				this.current_bar_index = 0;
+				this.current_scroll_into = '';
+			},
+			open_result_page() {
+				this.show_result = true; //打开结果页
+				this.current_search_result = {};
+				this.current_page = 0;
+				this.search();
+			},
+			
+			get_hot_list() {
+				$repeater.search.get_hot_list((data)=> {
+					
+					let hot_list = data.data;
+					//部分介绍结尾可能有换行符\n,需要去掉不然会扰乱样式
+					hot_list.forEach((item)=> {
+						item.content = item.content.trim();
+					})
+					this.hot_list = hot_list;
+				});
+			}
+		}
+	}
+</script>
+
+<style>
+	
+	.page{
+		flex: 1;
+		background-color: #121212;
+	}
+	.title-text {
+		font-size: 35rpx;
+		font-weight: bold;
+		color: #FFFFFF;
+	}
+	.title {
+		height: 80rpx;
+		width: 750rpx;
+		padding: 0 30rpx;
+		justify-content: center;
+	}
+	.content {
+		width: 750rpx; 
+		flex: 1;
+	}
+	.hot-item {
+		width: 750rpx;
+		height: 100rpx;
+		flex-direction: row;
+	}
+	.hot-item:active {
+		background-color: rgba(0,0,0,0.1);
+	}
+	.hot-item-index {
+		justify-content: center;
+		align-items: center;
+		width: 100rpx;
+	}
+	.index-text {
+		font-size: 26rpx;
+		color: rgba(0,0,0,0.3);
+	}
+	.hot-info {
+		width: 650rpx;
+		height: 100rpx;
+		justify-content: center;
+	}
+	.key_word {
+		font-size: 26rpx;
+	}
+	.description {
+		font-size: 18rpx;
+		color: rgba(0,0,0,0.3);
+		margin-top: 10rpx;
+	}
+	.scroll-bar-view {
+		width: 750rpx; height: 135rpx; flex-direction: row;
+		background-color: #121212;
+	}
+	.scroll-bar {
+		flex-direction: row;
+	}
+	.bar-name {
+		justify-content: center;
+		align-items: center;
+		margin-left: 25rpx;;
+		width: 155rpx;
+	}
+	.bar-name:active {
+		background-color: rgba(0, 0, 0, .1);
+	}
+	.button-name-text {
+		background: #121212;
+		height: 64rpx;
+		width: 154rpx;
+		border-radius: 20px;
+		border-color: rgba(255, 255, 255, .6);
+	}
+	.active-button {
+		border-radius: 20px;
+		height: 64rpx;
+		width: 154rpx;
+		border-color: #f0686f;
+		border-width: 5rpx;
+	}
+	
+	.bar-name-text {
+		font-size: 30rpx;
+		color: #FFFFFF;
+	}
+	.active-bar {
+		font-size: 30rpx;
+		font-weight: bold;
+		color: #f0686f;
+	}
+	.bar-box {
+		flex: 1;
+	}
+	
+	.top-bar {
+		flex-direction: row;
+		align-items: center;
+		width: 750rpx;
+		height: 90rpx;
+		
+	}
+	.icon {
+		padding: 0 30rpx;
+	}
+	.top-bar-text {
+		font-size: 26rpx;
+		color: #000000;
+	}
+	
+	.playlist-container {
+		flex-flow: row wrap;
+	}
+</style>
