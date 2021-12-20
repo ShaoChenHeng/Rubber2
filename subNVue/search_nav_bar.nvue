@@ -1,0 +1,121 @@
+<template>
+	<div class="sub_page">
+		<view style="width: 750rpx;" :style="{ height: statusbar_height + 'px'}"></view>
+		<view class="search-bar">
+			<!-- <view class="back">
+				<wyy-icon @tap="back" type="&#xe66a;" size="45" color="#FFFFFF" ></wyy-icon>
+			</view> -->
+			<view class="search-input-area">
+				<input @confirm="search" confirm-type="search" placeholder-class="input-placeholder" @input="on_input" v-model="input_content" type="text" class="input" placeholder="请输入搜索关键词" />
+			</view>
+			<view class="clear-input-area">
+				<view class="clear-input">
+					<wyy-icon @tap="clear" v-if="input_content" type="&#xe636;" size="45" color="#FFFFFF" ></wyy-icon>
+				</view>
+				
+			</view>
+			
+		</view>
+	</div>
+</template>
+
+<script>
+	import wyyIcon from '@/components/wyy-icon/wyy-icon.nvue';
+	
+	import $repeater from '@/utils/repeater.js';
+	export default {
+		components: {
+			wyyIcon
+		},
+		data() {
+			return {
+				input_content: '',
+			}
+		},
+		computed: {
+			statusbar_height() {
+				return $repeater.config.status_bar_height
+			}
+		},
+		created() {
+			
+		},
+		onShow() {
+			
+		},
+		onReady() {
+			
+		},
+		onUnload() {
+			
+		},
+		methods: {
+			search() {
+				uni.$emit('search', {keyword: this.input_content});
+			},
+
+			clear() {
+				this.input_content = '';
+			},
+			on_input(event) {
+				this.input_content = event.detail.value;
+			}
+		},
+	}
+</script>
+
+<style>
+	.sub_page{
+		flex: 1;
+		background-color: rgba(83, 83, 83, 1);
+	}
+	.search-bar {
+		flex: 1;
+		flex-direction: row;
+	}
+	.back {
+		width: 100rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.search-input-area {
+		/* width: 450rpx; */
+		flex: 1;
+		padding: 10rpx 0;
+		margin-left:100rpx;
+		justify-content: center;
+
+	}
+	
+	.right-menu {
+		width: 100rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.input {
+		flex: 1;
+		width: 550rpx;
+		font-size:30rpx;
+		font-weight: bold;
+		color: rgba(255, 255, 255, .8);
+	}
+	.clear-input {
+		flex: 1;
+		width: 100rpx;
+		justify-content: center;
+		align-items: center;
+		
+		margin-top: 10rpx;
+	}
+	.clear-input-area {
+		padding-bottom: 10rpx;
+		padding-right: 10rpx;
+	}
+	
+	.input-placeholder {
+		color: rgba(255, 255, 255, .4);
+	}
+	
+</style>
