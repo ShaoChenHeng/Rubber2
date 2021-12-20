@@ -36,7 +36,7 @@
 			</view>
 			<view class="top-bar-wrapper">
 				<view class="top-bar-option">
-					<view class="icon-area back" >
+					<view class="icon-area back" @tap="back()">
 						<wyy-icon type="&#xe699;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
 					<text class="title-text"> {{title}} </text>
@@ -51,7 +51,7 @@
 		<view class="footer">
 			<view class="slider-view">
 				<slider @change="slider_change" @changing="slider_changing" class="slider" :min="0" :max="duration"
-					:value="current_position" activeColor="rgba(255,255,255,.7)" backgroundColor="rgba(255,255,255,.4)"
+					:value="current_position" activeColor="rgba(255,255,255,.1)" backgroundColor="rgba(255,255,255,.1)"
 					block-color="#FFFFFF" block-size="15" />
 			</view>
 
@@ -204,6 +204,10 @@
 				this.init_timer();
 				this.init_slider();
 				
+			},
+			back() {
+				console.log('back');
+				uni.navigateBack();
 			},
 			init_slider() {
 				setTimeout(() => {
@@ -537,27 +541,35 @@
 
 	.lyric-row {
 		width: 750rpx;
-		height: 65rpx;
+		height: 80rpx;
 		padding-left: 16rpx;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.lyric-row-text {
-		font-size: 24rpx;
+		font-size: 35rpx;
 		color: #8B8682;
+		justify-content: center;
+		align-items: center;
+		
 	}
 
 	.light-text {
 		color: #FFFFFF;
-		font-size: 26rpx;
+		font-size: 45rpx;
 		font-weight: bold;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.lyric-list {
 		top: 100;
 		height: 900rpx;
-		width: 650rpx;
+		width: 750rpx;
+		text-align: center;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.bottom-icon-group {
