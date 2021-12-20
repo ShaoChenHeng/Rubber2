@@ -1,6 +1,7 @@
 <template>
 	<view class="page">
-		<image class="back-image" mode="aspectFill" :src="picUrl"></image>
+		<image class="back-image" mode="aspectFill" :src="played.cover_image"></image>
+		
 		<uni-transition :duration="300" :mode-class="mode_class" :styles="transfrom_class" :show="show_lyric">
 			<list v-if="!nolyric" class="lyric-list" show-scrollbar="false">
 				<cell @tap="change_container()" v-for="(row, index) in lyric" :key="index">
@@ -20,27 +21,26 @@
 			<view class="container">
 				<view class="cover">
 					<image ref="cover_image" class="cover-image" resize="cover"
-						:src="picUrl"
-						@tap="change_container()"></image>
+						:src="played.cover_image + '?param=650y650'" @tap="change_container()"></image>
 					<view class="song-details">
-						<text class="song-title"> 安静 </text>
-						<text class="song-singer"> 周杰伦 </text>
+						<text class="song-title"> {{played.name}} </text>
+						<text class="song-singer"> {{played.creator}} </text>
 					</view>
 				</view>
 			</view>
 		</uni-transition>
 
 		<view class="top-bar">
-			<view class="status_bar">
+			<view style="width: 750rpx;" :style="{ height: statusbar_height + 'px'}">
 				<!-- 这里是状态栏 -->
 			</view>
 			<view class="top-bar-wrapper">
 				<view class="top-bar-option">
-					<view class="icon-area back" @tap="getColor()">
+					<view class="icon-area back" >
 						<wyy-icon type="&#xe699;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
-					<text class="title-text"> hello </text>
-					<view class="icon-area details" @tap="next()">
+					<text class="title-text"> {{title}} </text>
+					<view class="icon-area detail" >
 						<wyy-icon type="&#xe655;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
 
@@ -85,32 +85,31 @@
 					</view>
 					<view class="icon-area" @tap="like($event)">
 						<wyy-icon :type="islike ? '&#xe720;' : '&#xe607;'" size="50"
-							:color="islike ? '#FF0000' : '#FFFFFF'"></wyy-icon>
+							:color="islike ? '#f0686f' : '#FFFFFF'"></wyy-icon>
 					</view>
 				</view>
 			</view>
 			<view class="handle-area-2">
 				<view class="bottom-icon-group">
-					<view class="icon-area share" @tap="next()">
+					<view class="icon-area share" @tap="">
 						<wyy-icon type="&#xe667;" size="30" color="#FFFFFF"></wyy-icon>
 					</view>
-					<view class="icon-area detail" @tap="next()">
+					<view class="icon-area playlist" @tap="open_playlist($event)">
 						<wyy-icon type="&#xe6c6;" size="30" color="#FFFFFF"></wyy-icon>
 					</view>
 
 				</view>
 			</view>
 		</view>
-
+		<playlist-drawer ref="playlist_drawer"></playlist-drawer>
 	</view>
 </template>
 
 <script>
 	import uniTransition from '@/components/uni-transition/uni-transition.vue'
+	import playlistDrawer from '@/components/playlist_drawer.nvue';
 	import wyyIcon from '../../components/wyy-icon/wyy-icon.nvue';
 	import $repeater from '@/utils/repeater.js';
-
-
 	const animation = weex.requireModule('animation');
 	const dom = weex.requireModule('dom')
 
@@ -118,22 +117,22 @@
 		components: {
 			uniTransition,
 			wyyIcon,
+			playlistDrawer,
 		},
 		data() {
 			return {
-				statusbar_height: '',
-				duration: '', //音频总长度单位s
-				current_position: '', //当前播放位置
-				windowHeight: 0,
-				windowWidth: 0,
+				statusbar_height: $repeater.config.status_bar_height,
+				duration: $repeater.player.get_duration().toFixed(0), //音频总长度单位s
+				current_position: $repeater.player.get_position().toFixed(0), //当前播放位置
 				timer: '', //计时器
 				picurl: '',
 				animation_timer: '',
 				deg: 0,
 				color: '',
+				title: '',
 				dragging: false, //
 				show_lyric: false, //是否显示歌词
-				nolyric: true,
+				nolyric: false,
 				lyric: [],
 				picUrl: 'https://i.ebayimg.com/images/g/A7QAAOSwIEFgRecV/s-l1600.jpg',
 				picUrl1:'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F051ac3cc44c9f4bd061582ef5b6101fd87b0165d.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1642437422&t=cb8c6b2af8e7f323657c760ca6ce831b',
@@ -146,7 +145,8 @@
 					'top': 0,
 					'left': 0,
 					'right': 0,
-					'align-items': 'center'
+					'height': '1100rpx',
+					'align-items': 'center',
 				},
 			};
 		},
@@ -174,13 +174,16 @@
 				return minute + ':' + second;
 			},
 			playing() {
-
+				return this.$store.state.playing;
 			},
 			played() {
-				// return this.$store.state.played;
+				return this.$store.state.played;
+			},
+			islike() {
+				return this.$store.state.likelist.includes(this.played.id);
 			},
 			play_mode() {
-				return 'single';
+				return this.$store.state.play_mode;
 			}
 		},
 		watch: {
@@ -197,11 +200,10 @@
 		},
 		methods: {
 			_init() {
-				this.set_title(this.played.name);
 				this.get_lyric();
-				this.init_cover_rotate();
 				this.init_timer();
-				this.init_slider()
+				this.init_slider();
+				
 			},
 			init_slider() {
 				setTimeout(() => {
@@ -209,8 +211,8 @@
 					this.current_position = $repeater.player.get_position().toFixed(0);
 				}, 1000);
 			},
-
-			open_playlist() {
+			open_playlist(event) {
+				event.stopPropagation();
 				this.$refs.playlist_drawer.open_playlist();
 			},
 			change_play_mode() {
@@ -315,43 +317,10 @@
 			},
 			change_container() {
 				this.show_lyric = !this.show_lyric;
+				if (this.title == '') this.title = this.played.name;
+				else this.title = '';
 			},
-			init_cover_rotate() {
-				if (this.animation_timer) {
-					clearInterval(this.animation_timer);
-					this.animation_timer = '';
-				}
-				let cover_image = this.$refs.cover_image;
 
-
-				let degree = this.deg + 'deg';
-
-				this.animation_timer = setInterval(() => {
-					if (this.playing) {
-						this.deg += 20; //步进值
-					}
-
-					degree = this.deg + 'deg';
-					animation.transition(cover_image, {
-						styles: {
-							transform: 'rotate(' + degree + ')',
-							transformOrigin: 'center center'
-						},
-						duration: 1400, //ms
-						timingFunction: 'linear',
-						delay: 0 //ms
-					}, () => {
-
-
-					})
-				}, 1400);
-
-			},
-			set_title(title) {
-				uni.setNavigationBarTitle({
-					title: title
-				});
-			},
 			slider_changing(e) {
 				this.dragging = true;
 				this.current_position = e.detail.value;
@@ -365,10 +334,8 @@
 			turn() {
 				// 切换播放暂停状态
 				console.log('in turn()')
+				console.log(this.played);
 				$repeater.player.turn();
-			},
-			stop_rotate() {
-
 			},
 			init_timer() {
 				if (this.timer) {
@@ -389,19 +356,14 @@
 			},
 			next() {
 				console.log('下一曲');
-				this.get_color();
-				// this.$refs.playlist_drawer.next_song();
+
+				this.$refs.playlist_drawer.next_song();
 			},
 			prev() {
 				console.log('上一曲');
-				this.get_color();
-				// this.$refs.playlist_drawer.prev_song();
+				this.$refs.playlist_drawer.prev_song();
 			},
-			download() {
-
-			}
 		},
-
 	}
 	// a test color is background: #30A0FF;
 	// :style="{'background':'#5d5d5d'}"
@@ -410,7 +372,7 @@
 <style>
 	.page {
 		flex: 1;
-		background-image: linear-gradient(to bottom right,  rgba(31, 31, 31, 0.2),rgba(0, 0, 0, 1));
+		background-image: linear-gradient(to bottom right,  rgba(31, 31, 31, 0.7),rgba(0, 0, 0, 1));
 	}
 
 	.back-image{
@@ -424,11 +386,6 @@
 		opacity: 0.3;
 	}
 	
-	.status_bar {
-		height: 100rpx;
-		width: 100%;
-	}
-
 	.top-bar {
 		position: fixed;
 		height: 200rpx;
@@ -445,24 +402,23 @@
 	.title-text {
 		color: #FFFFFF;
 		font-size: 40rpx;
+		font-weight: bold;
 	}
 
 	.top-bar-option {
 		width: 750rpx;
 		height: 90rpx;
-
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 		padding: 0rpx 60rpx 10rpx 50rpx;
 	}
-
-
+	
+	
 	.container {
 		top: 100;
 		height: 900rpx;
 		width: 650rpx;
-		
 	}
 
 	.cover {
@@ -476,6 +432,7 @@
 		width: 650rpx;
 		height: 100rpx;
 		text-align: left;
+		
 	}
 
 	.song-title {
@@ -532,8 +489,6 @@
 
 	.end_time {
 		width: 55rpx;
-
-
 	}
 
 	.time-text {
@@ -600,21 +555,17 @@
 	}
 
 	.lyric-list {
-		flex: 1;
-		background: #30A0FF;
-		width: 750rpx;
+		top: 100;
+		height: 900rpx;
+		width: 650rpx;
 	}
 
 	.bottom-icon-group {
-
 		flex-direction: row;
 		margin-right: 45rpx;
 	}
 
 	.next {
-		-moz-transform: scaleX(-1);
-		-webkit-transform: scaleX(-1);
-		-o-transform: scaleX(-1);
 		transform: scaleX(-1);
 	}
 </style>
