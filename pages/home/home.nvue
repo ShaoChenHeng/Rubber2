@@ -1,0 +1,418 @@
+<template>
+	<view class="page">
+	<scroll-view scroll-y="true" class="scroll-container">
+		<view class="top-wraper" :style="{backgroundImage: `linear-gradient(to bottom, ${get_color}, #121212)`}">
+			<view :style="{ height: statusbar_height + 'px'}" >
+				<!-- 这里是状态栏-->
+			</view>
+			<view class="greeting-words-container">
+				<text class="greeting-words"> {{get_greeting}} </text>
+			</view>
+			
+			<view class="button-wrapper">
+				<view class="icon-area config" >
+					<wyy-icon type="&#xe632;" size="45" color="#FFFFFF"></wyy-icon>
+				</view>
+				<view class="icon-area recent" >
+					<wyy-icon type="&#xe61c;" size="45" color="#FFFFFF"></wyy-icon>
+				</view>
+				<view class="icon-area config" >
+					<wyy-icon type="&#xe68b;" size="45" color="#FFFFFF"></wyy-icon>
+				</view>
+			</view>
+		</view>
+		
+			
+		
+		
+		<view class="item-title-bar" >
+			<text class="title-text">推荐歌单</text>
+		</view>
+		
+		<slide-bar :list="recomend_list"></slide-bar>
+			
+
+		<view class="item-title-bar">
+			<text class="title-text">热门歌曲</text>
+		</view>
+		<slide-bar :list="playlist_data"></slide-bar>
+
+		
+		<view class="item-title-bar">
+			<text class="title-text">最近播放</text>
+		</view>
+		<slide-bar :list="playlist_data"></slide-bar>
+		
+		<view class="item-title-bar">
+			<text class="title-text">热门专辑</text>
+		</view>
+		<slide-bar :list="playlist_data"></slide-bar>
+		
+	</scroll-view>
+		
+		<wyy-play v-if="played"></wyy-play>
+		<BottomBar></BottomBar>
+	</view>
+	
+</template>
+
+<script>
+	import slideBar from '@/components/slide-bar/slide_bar.nvue';
+	import playlistCard from '../../components/playlist_card.nvue';
+	import BottomBar from '@/components/BottomBar.nvue'
+	import wyyPlay from '@/components/wyy-play/wyy_play.nvue';
+	import $repeater from '@/utils/repeater.js';
+
+	export default {
+		components: {
+			slideBar,
+			BottomBar,
+			wyyPlay,
+			playlistCard
+		},
+		data() {
+			return {
+				show_play: false,
+				show_sidebar: false,
+				
+				recomend_list:[],
+				playlist_data: [  {
+					"id": 4936521153,
+					"coverImgUrl": "https://p2.music.126.net/FloXI2EaIAF7NErvhGJBOw==/109951164851311261.jpg",
+					"name": "LiyuuujiA",
+					"trackCount": 37,
+					"creator": {
+						"nickname": "谢谢品尝煎茶奶绿",
+						"userId": 1785798390,
+						"userType": 0,
+						"avatarUrl": "http://p2.music.126.net/AJ7y6AhCWM6FOxOjQYAw_w==/109951165128330121.jpg",
+						"authStatus": 0,
+						"expertTags": null,
+						"experts": null
+					}
+				},{
+					"id": 5000925826,
+					"coverImgUrl": "https://p2.music.126.net/fpx5pqgjU8WSZsy0xkWbUA==/109951164192475628.jpg",
+					"name": "Li'Y'uuuu",
+					"trackCount": 192,
+					"creator": {
+						"nickname": "鲤鱼是精",
+						"userId": 422724855,
+						"userType": 0,
+						"avatarUrl": "http://p2.music.126.net/zFZm_7gvwuwWFfb85rltJA==/109951163578763086.jpg",
+						"authStatus": 0,
+						"expertTags": null,
+						"experts": null
+					}
+				}, {
+					"id": 7124430985,
+					"coverImgUrl": "https://p2.music.126.net/nxVlQ_YDM-lAeXKGQCJuHA==/109951166720188216.jpg",
+					"name": "liyuu",
+					"trackCount": 6,
+					"creator": {
+						"nickname": "Twilight_zoe",
+						"userId": 246434638,
+						"userType": 0,
+						"avatarUrl": "http://p2.music.126.net/e7UiT8M97u4SKXKL2pZiNQ==/109951163454492947.jpg",
+						"authStatus": 0,
+						"expertTags": null,
+						"experts": null
+					}
+				}, {
+					"id": 7123193787,
+					"coverImgUrl": "https://p2.music.126.net/XpBdeYzQmaRVpXh04ehb8w==/109951166726739388.jpg",
+					"name": "Liella Liyuu",
+					"trackCount": 29,
+					"creator": {
+						"nickname": "无月圆云影",
+						"userId": 131680416,
+						"userType": 0,
+						"avatarUrl": "http://p2.music.126.net/CfNG-O_BsAnpunuFF9N2GQ==/18590542602484184.jpg",
+						"authStatus": 0,
+						"expertTags": null,
+						"experts": null
+					}
+				}, {
+					"id": 6898742798,
+					"coverImgUrl": "https://p2.music.126.net/jB1UW94J8xTuPM1NoR4ZjA==/109951166245809051.jpg",
+					"name": "鲤鱼liyuu",
+					"trackCount": 7,
+					"creator": {
+						"nickname": "山河水墨2006",
+						"userId": 3377415999,
+						"userType": 0,
+						"avatarUrl": "http://p2.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg",
+						"authStatus": 0,
+						"expertTags": null,
+						"experts": null
+					}
+				},  {
+					"id": 7080575785,
+					"coverImgUrl": "https://p2.music.126.net/GUThAoBcskWUBWKD_GLaxg==/18556457743863698.jpg",
+					"name": "Liyuuuuuuuuuuu",
+					"trackCount": 82,
+					"creator": {
+						"nickname": "liyuuuuuuuuuuuuuuu",
+						"userId": 1508792648,
+						"userType": 0,
+						"avatarUrl": "http://p2.music.126.net/fphcnEIgTQh5e-_Qx707Xw==/109951166657763849.jpg",
+						"authStatus": 0,
+						"expertTags": null,
+						"experts": null
+					}
+				}],
+		
+				tab_index: 0,
+				tabBars: [
+					{name: '我的', id: 'mine'},
+					{name: '发现', id: 'find'},
+					{name: '朋友', id: 'friends'},
+					{name: '视频', id: 'video'},
+				],
+				
+			}
+		},
+		computed: {
+			played: function() {
+				return this.$store.state.played;
+			},
+			statusbar_height() {
+				return $repeater.config.status_bar_height
+			},
+			get_color() {
+				var myDate = new Date();
+				var hour = myDate.getHours();
+				if (5 < hour && hour <= 9) return '#ee6060';
+				else if (9 < hour && hour <= 11) return '#6199d2';
+				else if (11 < hour && hour <= 13) return '#f3e395';
+				else if (13 < hour && hour <= 17) return '#eea16d';
+				else if (17 < hour && hour <= 24) return '#1f3972';
+				else if (0 <= hour && hour <= 5) return '#7344ba';
+			},
+			get_greeting() {
+				var myDate = new Date();
+				var hour = myDate.getHours();
+				if (5 < hour && hour <= 9) return '早上好';
+				else if (9 < hour && hour <= 11) return '早上好';
+				else if (11 < hour && hour <= 13) return '中午好';
+				else if (13 < hour && hour <= 17) return '下午好';
+				else if (17 < hour && hour <= 24) return '晚上好';
+				else if (0 <= hour && hour <= 5) return '晚上好';
+			},
+			
+		},
+		watch: {
+			tab_index: function(val, old_val) {
+				
+			}
+		},
+		onBackPress() {
+			$repeater.helper.backgrounder();
+		},
+		
+		created() {
+			this.init_user();
+			this.get_recommend_playlists();
+		},
+		onShow() {
+			
+		},
+		onUnload() {
+			
+		},
+		
+		methods: {
+			get_recommend_playlists() {
+				$repeater.personalized.playlist((res)=> {
+					let format_lists = []
+					res.result.forEach((playList)=>{
+						let format_list = {}
+						format_list.id = playList.id;
+						format_list.name = playList.name;
+						format_list.coverImgUrl = playList.picUrl;
+						format_lists.push(format_list)
+					})
+					
+					this.recomend_list = format_lists;
+				}, 6)
+			},
+			init_user() {
+				let uid = this.$store.state.uid;
+				$repeater.user.get_user_detail(uid, (user_info)=> {
+					this.$store.commit('set_user_info', user_info)
+				});
+				$repeater.user.get_subcount((data)=> {
+					this.$store.commit('set_subcount', data);
+				});
+				$repeater.user.get_likelist(uid, (data)=> {
+					this.$store.commit('set_likelist', data.ids);
+				});
+			},
+			ontabtap(index) {
+				this.change_tab_index(index);
+			},
+			show_side_drawer() {
+				this.show_sidebar = true;
+			},
+			close_side_drawer() {
+				this.show_sidebar = false;
+			},
+			change_tab(e) {
+				
+				let index = e.target.current || e.detail.current;
+				this.change_tab_index(index);
+			},
+			change_tab_index(index) {
+				
+				this.tab_index = index;
+			}
+		}
+	}
+</script>
+
+<style>
+	@import '../../common/wyy.css';
+	.scroll-container{
+		flex: 1;
+	}
+	
+	.page {
+		flex: 1;
+		flex-direction: column;
+	}
+	
+	.top-wraper {
+		height: 220rpx;
+		flex-direction: row;
+		align-items: center;
+		padding-top: 75rpx;
+	}
+	
+	.greeting-words-container {
+		width: 300rpx;
+		height: 110rpx;
+		justify-content: center;
+	}
+	
+	.greeting-words {
+		color: #FFFFFF;
+		font-size: 50rpx;
+		font-weight: bold;
+		padding-left: 30rpx;
+	}
+	
+	.button-wrapper {
+		width: 450rpx;
+		height: 110rpx;
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+	
+	.icon-area {
+		width: 70rpx;
+		height: 110rpx;
+		flex-direction: row;
+		align-items: center;
+		margin-right: 15rpx;
+	}
+	
+	.item-title-bar{
+		width: 750rpx;
+		height: 180rpx;
+		align-items: flex-start;
+		padding-left: 40rpx;
+		background-color: #121212;
+	}
+	
+	.title-text {
+		
+		font-size: 50rpx;
+		font-weight: bold;
+		color: #FFFFFF;
+	}
+	
+	.x-scroller {
+		height: 460rpx;;
+		width: 100%;
+		overflow: hidden;
+		background-color: #c2c2c2;
+		flex-direction: row;
+	}
+	
+	.scroller-item {
+		display: inline-block;
+		flex-direction: row;
+	}
+	
+	.list-container {
+		flex-direction: row;
+	}
+	
+	.swiper-box {
+		flex: 1;
+	}
+
+	.sub_page {
+		flex-direction: row;
+		justify-content: space-between;
+		background-color: rgba(218, 203, 129, 1.0);
+	}
+
+	
+
+	.scroll-h {
+		background-color: rgba(218, 45, 30, 1);
+		width: 550rpx;
+		height: 80rpx;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+
+	.uni-tab-item-title {
+		color: #FFFFFF;
+		font-size: 26rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		flex-wrap: nowrap;
+		/* #ifndef APP-PLUS */
+		white-space: nowrap;
+		/* #endif */
+	}
+
+	.uni-tab-item-title-active {
+		color: #FFFFFF;
+		font-weight: 600;
+		font-size: 32rpx;
+	}
+
+	.tab-item {
+		justify-content: center;
+		align-items: center;
+		margin: 0 10rpx;
+		width: 100rpx;
+	}
+
+	.left-bar {
+		width: 100rpx;
+		height: 80rpx;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.right-bar {
+		width: 100rpx;
+		height: 80rpx;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.menu-icon {
+		width: 35rpx;
+		height: 35rpx;
+	}
+	.search-icon {
+		width: 35rpx;
+		height: 35rpx;
+	}
+</style>
