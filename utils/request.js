@@ -9,6 +9,7 @@ function get(url, params, success_cb, failed_cb) {
 		data: params,
 		method:"GET",
 		success: (res)=>{
+			
 			success_cb && success_cb(res);
 		},
 		fail:(res) => {
@@ -43,9 +44,9 @@ function post(url, params, success_cb, failed_cb) {
 }
 
 function test() {
+	//111.13.100.92
 	uni.request({
-			//仅为示例，并非真实接口地址。
-	    url: 'https://www.baidu.com/', 
+	    url: 'https://www.baidu.com/', //仅为示例，并非真实接口地址。
 	    success: (res) => {
 	        console.log(res.data);
 	    }
