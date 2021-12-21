@@ -39,7 +39,7 @@
 					<view class="icon-area back" @tap="back()">
 						<wyy-icon type="&#xe699;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
-					<text class="title-text"> {{title}} </text>
+					<text class="title-text" v-if="show_title"> {{played.name}} </text>
 					<view class="icon-area detail" >
 						<wyy-icon type="&#xe655;" size="50" color="#FFFFFF"></wyy-icon>
 					</view>
@@ -69,9 +69,9 @@
 			<view class="handle-area">
 				<view class="icon-group">
 					<view class="icon-area loop" @tap="change_play_mode">
-						<wyy-icon v-if="play_mode == 'random'" type="&#xe676;" size="50" color="#FFFFFF"></wyy-icon>
-						<wyy-icon v-if="play_mode == 'sequence'" type="&#xe674;" size="50" color="#FFFFFF"></wyy-icon>
-						<wyy-icon v-if="play_mode == 'single'" type="&#xe678;" size="50" color="#FFFFFF"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'random'" type="&#xe676;" size="50" color="#f0686f"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'sequence'" type="&#xe674;" size="50" color="#f0686f"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'single'" type="&#xe678;" size="50" color="#f0686f"></wyy-icon>
 					</view>
 					<view class="icon-area prev" @tap="prev()">
 						<wyy-icon type="&#xe66f;" size="50" color="#FFFFFF"></wyy-icon>
@@ -133,6 +133,7 @@
 				dragging: false, //
 				show_lyric: false, //是否显示歌词
 				nolyric: false,
+				show_title: false,
 				lyric: [],
 				picUrl: 'https://i.ebayimg.com/images/g/A7QAAOSwIEFgRecV/s-l1600.jpg',
 				picUrl1:'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F051ac3cc44c9f4bd061582ef5b6101fd87b0165d.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1642437422&t=cb8c6b2af8e7f323657c760ca6ce831b',
@@ -203,7 +204,6 @@
 				this.get_lyric();
 				this.init_timer();
 				this.init_slider();
-				
 			},
 			back() {
 				console.log('back');
@@ -256,9 +256,10 @@
 
 				let current_row = active_lyric_rows.pop();
 
-				if (this.active_lyric_row_index == current_row.index) { //在一行歌词停留时, 就不滚动了
+				// 有问题
+				/* if (this.active_lyric_row_index == current_row.index) { //在一行歌词停留时, 就不滚动了
 					return;
-				}
+				} */
 
 
 				this.active_lyric_row_index = current_row.index;
@@ -269,10 +270,12 @@
 
 					console.log(active_lyric_rows.slice(-8)[0]);
 				}
-
+				
 				if (current_row.content && to_index > 0) {
+					console.log(to_index);
 					try {
 						const el = this.$refs[`lyric${to_index}`][0];
+						
 						dom.scrollToElement(el, {})
 					} catch (e) {
 						console.log(e);
@@ -319,8 +322,8 @@
 			},
 			change_container() {
 				this.show_lyric = !this.show_lyric;
-				if (this.title == '') this.title = this.played.name;
-				else this.title = '';
+				if (this.show_title == false) this.show_title = true;
+				else this.show_title = false;
 			},
 
 			slider_changing(e) {
