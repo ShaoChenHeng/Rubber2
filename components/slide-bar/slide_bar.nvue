@@ -1,0 +1,72 @@
+<template>
+	<scroller class="slide-bar-container" scroll-direction="horizontal">
+		<playlist-card v-for="(playlist, p_index) in list" :key="p_index" :playlist="playlist"></playlist-card>
+	</scroller>
+</template>
+
+<script>
+	import playlistCard from '../../components/playlist_card.nvue';
+	import $repeater from '@/utils/repeater.js';
+	export default {
+		components: {
+			playlistCard,
+		},
+		props: {
+			list: {
+				type: Array,
+				default : []
+			}
+		},
+			
+		data() {
+			return {
+				
+			};
+		},
+		methods: {
+			test() {
+				// $repeater.helper.to('../video/video');
+			}
+		},
+		created() {
+			
+		}
+	}
+</script>
+
+<style>
+.slide-bar-container {
+	width: 750rpx;
+	height: 460rpx;
+	flex-direction: row;
+	justify-content: space-between;
+	background-color: #121212;
+	border-bottom-color: rgba(0, 0, 0, 0.05);
+	border-bottom-style: solid;
+	border-bottom-width: 1rpx;
+	padding-left: 15rpx;
+}
+
+.c-bar {
+	width: 150rpx;
+	height: 180rpx;
+	padding: 35rpx 30rpx;
+	flex-direction: column;
+	align-items: center;
+}
+.c-bar-name{
+	font-size: 17rpx;
+}
+.c-bar-image {
+	width: 200rpx;
+	height: 200rpx;
+}
+
+.c-bar-text {
+	height: 35rpx;
+	width: 80rpx;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
+}
+</style>
