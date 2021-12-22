@@ -22,29 +22,24 @@
 			</view>
 		</view>
 		
-			
-		
-		
 		<view class="item-title-bar" >
 			<text class="title-text">推荐歌单</text>
 		</view>
-		
-		<slide-bar :list="recomend_list"></slide-bar>
+		<slide-bar :list="recomend_list" :model="'large'" :type="'playlist'"></slide-bar>
 			
 
 		<view class="item-title-bar">
-			<text class="title-text">热门歌曲</text>
+			<text class="title-text">新歌速递</text>
 		</view>
-		<slide-bar :list="playlist_data"></slide-bar>
+		<slide-bar :list="new_songs" :model="'tiny'" :type="'song'"></slide-bar>
 
+		<view class="item-title-bar">
+			<text class="title-text">热门专辑</text>
+		</view>
+		<slide-bar :list="top_albums" :model="'large'" :type="'album'"></slide-bar>
 		
 		<view class="item-title-bar">
 			<text class="title-text">最近播放</text>
-		</view>
-		<slide-bar :list="playlist_data"></slide-bar>
-		
-		<view class="item-title-bar">
-			<text class="title-text">热门专辑</text>
 		</view>
 		<slide-bar :list="playlist_data"></slide-bar>
 		
@@ -76,6 +71,8 @@
 				show_sidebar: false,
 				
 				recomend_list:[],
+				new_songs:[],
+				top_albums:[],
 				playlist_data: [  {
 					"id": 4936521153,
 					"coverImgUrl": "https://p2.music.126.net/FloXI2EaIAF7NErvhGJBOw==/109951164851311261.jpg",
@@ -213,6 +210,8 @@
 		created() {
 			this.init_user();
 			this.get_recommend_playlists();
+			this.get_new_songs();
+			this.get_top_albums();
 		},
 		onShow() {
 			
@@ -235,6 +234,38 @@
 					
 					this.recomend_list = format_lists;
 				}, 6)
+			},
+			get_new_songs() {
+				$repeater.search.get_new_songs((data)=> {
+					let new_songs = data.data;
+					let format_songs = []
+					new_songs = new_songs.slice(0, 30);
+					new_songs.forEach((item)=> {
+						let format_song = {}
+						format_song.id = item.id;
+						format_song.name = item.name;
+						format_song.artists = item.artists
+						format_song.picUrl = item.album.blurPicUrl;
+						format_songs.push(format_song);
+					})
+					this.new_songs = format_songs;
+				});
+			},
+			get_top_albums() {
+				$repeater.search.get_top_albums((data)=>{
+					let albums = data.monthData;
+					albums = albums.slice(0, 30);
+					let format_albums = []
+					albums.forEach((album) => {
+						let format_album = {}
+						format_album.id = album.id;
+						format_album.name = album.name;
+						format_album.artists = album.artists;
+						format_album.picUrl = album.blurPicUrl;
+						format_albums.push(format_album)
+					})
+					this.top_albums = format_albums;
+				})
 			},
 			init_user() {
 				let uid = this.$store.state.uid;
@@ -318,14 +349,14 @@
 	
 	.item-title-bar{
 		width: 750rpx;
-		height: 180rpx;
+		height: 100rpx;
 		align-items: flex-start;
+		padding-top: 25rpx;
 		padding-left: 40rpx;
 		background-color: #121212;
 	}
 	
 	.title-text {
-		
 		font-size: 50rpx;
 		font-weight: bold;
 		color: #FFFFFF;
