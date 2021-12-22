@@ -1,0 +1,86 @@
+<template>
+	<view>
+		<view class="container">
+
+			<view class="wrapper" v-for="(tab,index) in tabBars" @tap="change_page(index)">
+				<view class="wrapper-top">
+					<wyy-icon :type="tab.icon" size="40" 
+					 :color="index == tab_index ? '#ff0031' : 'rgba(255, 255, 255, .6)'" ></wyy-icon>
+				</view>
+				<view class="wrapper-bottom">
+					<text :class="index == tab_index ? 'active-text' : 'text'">{{tab.name}}</text>
+				</view>
+			</view>
+
+		</view>
+	</view>
+</template>
+
+<script>
+	import $repeater from '@/utils/repeater.js';
+	import wyyIcon from '../components/wyy-icon/wyy-icon.nvue';
+	export default {
+		name:"BottomBar",
+		components: {
+			wyyIcon,
+		},
+		data() {
+			return {
+				tabBars: [
+					{name: '主页', id: 'home', icon: '&#xe9d5;'},
+					{name: '搜索', id: 'serach', icon: '&#xe634;'},
+					{name: '我的', id: 'mine', icon: '&#xe624;'},
+				],
+			};
+		},
+		computed: {
+			tab_index() {
+				return this.$store.state.current_page;
+			}
+		},
+		methods: {
+			change_page(index) {
+				this.$store.commit('change_page', index);
+				if (index == 0) {
+					$repeater.helper.to('../../pages/home/home');
+				} else if (index == 1) {
+					$repeater.helper.to('../../pages/search/search');
+				} else if (index == 2) {
+					$repeater.helper.to('../../pages/index/index');
+				}
+			}
+		}
+	}
+</script>
+
+<style>
+	.container {
+		width: 750rpx;
+		height: 150rpx;
+		background: linear-gradient(to bottom, rgba(18, 18, 18, 1),rgba(20, 20, 20, 0.9));
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+	.wrapper {
+		width: 250rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	.wrapper-top{
+		margin-top: 20rpx;
+		
+	}
+	.wrapper-bottom{
+		margin-top: 15rpx;
+	}
+	.text {
+		font-size: 24rpx;
+		color: rgba(255, 255, 255, .6);
+	}
+	.active-text {
+		font-weight: bold;
+		font-size: 24rpx;
+		color: #ff0031;
+	}
+</style>
