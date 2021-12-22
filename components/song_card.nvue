@@ -51,6 +51,9 @@
 		computed: {
 			played: function() {
 				return this.$store.state.played;
+			}, 
+			play_mode() {
+				return this.$store.state.play_mode;
 			}
 		},
 		methods: {
@@ -106,7 +109,7 @@
 		background-color: #121212;
 	}
 	.music:active{
-		opacity: 0.9;
+		opacity: 0.8;
 	}
 	.cover {
 		width: 140rpx;
