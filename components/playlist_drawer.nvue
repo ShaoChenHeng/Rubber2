@@ -4,9 +4,9 @@
 			<view class="header" style="">
 				<view class="play-type" @tap="change_play_mode">
 					<view class="icon-area" >
-						<wyy-icon v-if="play_mode == 'random'" type="&#xe676;" size="35" color="#f0686f"></wyy-icon>
-						<wyy-icon v-if="play_mode == 'sequence'" type="&#xe674;" size="35" color="#f0686f"></wyy-icon>
-						<wyy-icon v-if="play_mode == 'single'" type="&#xe678;" size="35" color="#f0686f"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'random'" type="&#xe676;" size="35" color="#ff0031"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'sequence'" type="&#xe674;" size="35" color="#ff0031"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'single'" type="&#xe678;" size="35" color="#ff0031"></wyy-icon>
 					</view>
 					<view>
 						<text class="header-text" v-if="play_mode == 'random'">随机播放</text>
@@ -20,7 +20,7 @@
 			<list style="flex: 1;" show-scrollbar="false">
 				<cell class="song-cell" v-for="(song, index) in playlist" :key="index" @tap="play(song.id)" :ref="`song${song.id}`">
 					<view class="song-line">
-						<wyy-icon  v-if="song.id == played.id" type="&#xe67f;" size="35" color="#f0686f" ></wyy-icon>
+						<wyy-icon  v-if="song.id == played.id" type="&#xe67f;" size="35" color="#ff0031" ></wyy-icon>
 						<view>
 							<text :class="song.id == played.id ? 'active-song-name' : 'song-name'" >{{song.name}}</text>
 						</view>
@@ -141,7 +141,7 @@
 		border-bottom-width: 1rpx;
 	}
 	.header-text {
-		color: #f0686f;
+		color: #ff0031;
 		font-size: 30rpx;
 		font-weight:bold;
 		margin-left: 15rpx;
@@ -167,13 +167,13 @@
 	}
 	
 	.active-song-name {
-		color: #f0686f;
+		color: #ff0031;
 		font-size: 30rpx;
 		font-weight:bold;
 		margin-left: 15rpx;
 	}
 	.active-song-singer {
-		color: #f0686f;
+		color: #ff0031;
 		font-size: 29rpx;
 		
 	}
