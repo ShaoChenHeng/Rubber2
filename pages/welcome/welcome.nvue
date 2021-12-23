@@ -1,0 +1,98 @@
+<template>
+	<view class="page ">
+		<image style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;" src="../../static/run.jpg"></image>
+	</view>
+</template>
+
+<script>
+	import wyyIcon from '../../components/wyy-icon/wyy-icon.nvue';
+	
+	
+	import $repeater from '@/utils/repeater.js';
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		components: {
+			wyyIcon
+		},
+		created() {
+			this.check_login();
+		},
+		
+		methods: {
+			check_login() {
+				setTimeout(function() {
+					uni.redirectTo({
+						url: '../home/home',
+					});	
+				}, 1500);
+				
+				/* $repeater.user.check_login((user_status)=> {
+					console.log(user_status);
+					if (user_status && $repeater.storage.is_login()) { // 已登录
+						let uid = user_status.profile.userId;
+						this.$store.commit('set_uid', uid);
+						
+						setTimeout(function() {
+							
+						}, 1500);
+						
+					}else { // 未登录
+						setTimeout(function() {
+							uni.redirectTo({
+								url: '../login/login',
+							});
+						}, 1500);
+					}
+					
+				}); */
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	@import '../../common/wyy.css';
+	
+	.page {
+		flex: 1;
+	}
+	.container {
+		margin-top: 200rpx;
+		width: 750rpx;
+		height: 300rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	.slogan {
+		font-size: 80rpx;
+		font-weight: bold;
+		color: #FFFFFF;
+	}
+	.footer {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		flex-direction: row;
+		width: 750rpx;
+		height: 80rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	.cycle {
+		border-radius: 100rpx;
+		width: 30rpx;
+		height: 30rpx;
+		background-color: #FFFFFF;
+		justify-content: center;
+		align-items: center;
+		margin-right: 10rpx;
+	}
+	.footer-text {
+		font-size: 26rpx;
+		color: #FFFFFF;
+	}
+</style>
