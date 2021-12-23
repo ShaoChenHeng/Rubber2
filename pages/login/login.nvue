@@ -1,0 +1,84 @@
+<template>
+	<view class="page">
+		<view class="login-wraper">
+			<image style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0.4; " src="../../static/login.jpg"></image>
+			<view class="button-wrapper">
+				<button @tap="login_by_password" size="default"  class="login-button">
+					<text style="color: #e63e43; font-weight: bold;"> 密码登录 </text>
+				</button>
+				<button @tap="login_by_captcha" size="default"  class="login-button">
+					<text style="color: #e63e43; font-weight: bold;"> 短信验证 </text>
+				</button>
+			</view>
+			
+			<view style="height: 70rpx;  position:absolute; bottom:0rpx; left: 0;  right: 0;">
+				<text style="bottom: 0; font-size: 30rpx; text-align: center; color:  rgba(255, 255, 255, .6);"> 登录解锁更多内容 </text>
+			</view>
+		</view>
+		<wyy-play v-if="played"></wyy-play>
+		<BottomBar></BottomBar>
+	</view>
+</template>
+
+<script>
+	import $repeater from '@/utils/repeater.js';
+	import BottomBar from '../../components/BottomBar.nvue'
+	import wyyPlay from '../../components/wyy-play/wyy_play.nvue';
+	
+	export default {
+		components:{
+			BottomBar,
+			wyyPlay,
+		},
+		data() {
+			return {
+				
+			}
+		},
+		computed: {
+			played: function() {
+				return this.$store.state.played;
+			},
+		},
+		methods: {
+			login_by_captcha() {
+				$repeater.helper.to('./captcha');
+			},
+			login_by_password() {
+				$repeater.helper.to('./password');
+			}
+		}
+	}
+</script>
+
+<style>
+	.page {
+		flex: 1;
+	}
+	
+	.login-wraper {
+		flex: 1;
+		background:linear-gradient(to bottom, #5e5e8c, #000000);
+	}
+	
+	.button-wrapper{
+		position: absolute;
+		bottom: 100rpx;
+		width: 750rpx;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding-left: 35rpx;
+		padding-right: 50rpx;
+	}
+	
+	.login-button {
+		width: 300rpx;
+		border-radius: 20rpx;
+		height: 80rpx;
+		background-color: #FFFFFF;
+		border-color: #FFFFFF;
+	}
+	
+	
+</style>
