@@ -61,20 +61,18 @@
 										</view>
 									</view>
 									
+									<view v-if="key == 'album'">
+										<view class="title">
+											<text class="title-text">专辑</text>
+										</view>
+										<view class="playlist-container">
+											<album-card v-for="(album, album_index) in value.albums" :key="album_index" :album="album"></album-card>
+										</view>
+									</view>
+									
 								</cell>
 							</list>
 							<!-- 综合END -->
-							
-							<!-- 单曲 -->
-							
-							<!-- <list show-scrollbar="false" style="flex: 1;" v-else-if="page.id == 1">
-								<cell v-for="(value, key, t_index) in comprehensive_data" :key="t_index">
-									<view v-if="key == 'song'">
-										<song-card :show_number="false"  v-for="(song, s_index) in value.songs" :song="song" :key="s_index"></song-card>
-									</view>
-								</cell>
-							</list> -->
-							<!-- 单曲END -->
 							
 							<!-- 单曲 -->
 							<list show-scrollbar="false" style="flex: 1;" v-else-if="page.id == 1">
@@ -86,7 +84,6 @@
 							<!-- 单曲END -->
 							
 							<!-- 歌单 -->
-							
 							<list show-scrollbar="false" style="flex: 1;" v-else-if="page.id == 1000">
 								<cell>
 								<view class="playlist-container">
@@ -96,11 +93,16 @@
 							</list>
 							<!-- 歌单END -->
 							
-							<list v-else>
+							<!-- 专辑 -->
+							<list show-scrollbar="false" style="flex: 1;" v-else-if="page.id == 10">
 								<cell>
-									未完成
+									<view class="playlist-container">
+										<album-card v-for="(album, album_index) in album_data" :key="album_index" :album="album"></album-card>
+									</view>
 								</cell>
 							</list>
+							<!-- 专辑END -->
+							
 							
 						</swiper-item>
 					</swiper>
@@ -125,6 +127,7 @@
 	import playlistCard from '../../components/playlist_card.nvue';
 	import $repeater from '@/utils/repeater.js';
 	import BottomBar from '@/components/BottomBar.nvue';
+	import albumCard from '../../components/album_card.nvue';
 	
 	export default {
 		components: {
@@ -133,7 +136,8 @@
 			songCard,
 			playlistCard,
 			wyyIcon,
-			BottomBar
+			BottomBar,
+			albumCard
 		},
 		data() {
 			return {
@@ -145,7 +149,7 @@
 					{id: 1, name: '单曲', key: 'song'},
 					// {id: 1014, name: '视频', key: 'mv'},
 					// {id: 100, name: '歌手', key: 'artist'},
-					// {id: 10, name: '专辑', key: 'album'},
+					{id: 10, name: '专辑', key: 'album'},
 					{id: 1000, name: '歌单', key: 'playlist'},
 					// {id: 1009, name: '主播电台', key: 'dj'},
 					// {id: 1002, name: '用户', key: 'user'},
@@ -179,14 +183,7 @@
 				}
 				if (!this.current_search_result[this.result_bars[index].key]) {
 					this.search();
-				}
-/* 				if (this.result_bars[index].key == 'song') {
-					setTimeout(()=>{
-						this.handel_songs();	
-					}, 2500);
-					
-				} */
-				
+				}				
 			}
 		},
 		computed: {
@@ -230,28 +227,46 @@
 				}
 				return comprehensive
 			},
-			songs_data: function() {
-				/* console.log(this.handel_songs());
-				return this.handel_songs(); */
-			}
+			album_data() {
+				if (!this.search_result_init_check('album')) {
+					return;
+				}
+				let albums = this.current_search_result.album.albums;
+				let format_albums = []
+				if (albums) { 
+					albums.forEach((album)=> {
+						let format_album = {}
+						format_album.id = album.id;
+						format_album.name = album.name;
+						format_album.artists = album.artists;
+						format_album.picUrl= album.picUrl;
+						format_albums.push(format_album)
+					})
+				}
+				return format_albums;
+			},
+			
 		},
-
-		onBackPress() {
-			// 如果当前显示的是搜索结果页, 则拦截返回事件, 并关闭结果页
-			if (this.show_result) {
-				this.close_result_page();
-				return true;
-			}
-		},
+		
 		created() {
 			uni.$on('search', this.on_search);
+			// 可能有问题
+			uni.$on('back', this.onBackPress);
 			this.get_hot_list()
 		},
 		beforeDestroy() {
 			uni.$off('search');
+			// 可能有问题
+			uni.$off('back');
 		},
 		methods: {
-
+			onBackPress() {
+				// 如果当前显示的是搜索结果页, 则拦截返回事件, 并关闭结果页
+				if (this.show_result) {
+					this.close_result_page();
+					return true;
+				}
+			},
 			handel_songs() {
 				console.log('in handel_songs1')
 				if (!this.search_result_init_check('song')) {
@@ -276,7 +291,6 @@
 						let item = data.songs[0];
 						format_song.picUrl = item.al.picUrl;
 						format_songs.push(format_song);
-						counter ++;
 						this.out_format_song = format_songs;
 					})
 				})
@@ -284,8 +298,8 @@
 			//检查是否可以正常展示搜索结果相关的内容
 			search_result_init_check(module) {
 				
-				console.log('module is:')
-				console.log(module);
+				//console.log('module is:')
+				//console.log(module);
 				if (!this.current_keyword) { //没有搜索关键词
 					console.log('1')
 					return false;
@@ -305,7 +319,6 @@
 				this.set_keyword(e.keyword);
 			},
 			set_keyword(keyword) {
-				console.log(keyword);
 				this.current_keyword = keyword;
 				this.open_result_page();
 			},
@@ -329,9 +342,13 @@
 				let type = this.result_bars[index].id
 				let key = this.result_bars[index].key
 				let page = this.current_page;
-				
+ 				console.log(keyword)
+				console.log(type)
+				console.log(page)
+				console.log(key)
 				$repeater.search.search(keyword, type, page, (data)=> {
 					this.$set(this.current_search_result, this.result_bars[index].key, data.result);
+					// console.log(data.result)
 					if (key == 'song') {
 						this.handel_songs();
 					}
@@ -357,7 +374,6 @@
 				$repeater.search.get_hot_list((data)=> {
 					
 					let hot_list = data.data;
-					console.log(hot_list);
 					//部分介绍结尾可能有换行符\n,需要去掉不然会扰乱样式
 					hot_list.forEach((item)=> {
 						item.content = item.content.trim();
@@ -436,7 +452,7 @@
 		width: 155rpx;
 	}
 	.bar-name:active {
-		background-color: rgba(0, 0, 0, .1);
+		opacity: 0.8;
 	}
 	.button-name-text {
 		background: #121212;
@@ -449,7 +465,7 @@
 		border-radius: 20px;
 		height: 64rpx;
 		width: 154rpx;
-		border-color: #f0686f;
+		border-color: #ff0031;
 		border-width: 5rpx;
 	}
 	
@@ -460,7 +476,7 @@
 	.active-bar {
 		font-size: 30rpx;
 		font-weight: bold;
-		color: #f0686f;
+		color: #ff0031;
 	}
 	.bar-box {
 		flex: 1;
