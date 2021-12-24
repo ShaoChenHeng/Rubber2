@@ -1,7 +1,6 @@
 <template>
 	<view>
 		<view class="container">
-
 			<view class="wrapper" v-for="(tab,index) in tabBars" @tap="change_page(index)">
 				<view class="wrapper-top">
 					<wyy-icon :type="tab.icon" size="40" 
@@ -31,7 +30,11 @@
 					{name: '搜索', id: 'serach', icon: '&#xe634;'},
 					{name: '我的', id: 'mine', icon: '&#xe624;'},
 				],
+				is_login: false,
 			};
+		},
+		created() {
+			
 		},
 		computed: {
 			tab_index() {
@@ -40,15 +43,26 @@
 		},
 		methods: {
 			change_page(index) {
+				let routes = getCurrentPages();
+				let curRoute = this.$store.state.current_page;
+				if (curRoute == index) {
+					return;	
+				}
 				this.$store.commit('change_page', index);
 				if (index == 0) {
 					$repeater.helper.to('../../pages/home/home');
 				} else if (index == 1) {
 					$repeater.helper.to('../../pages/search/search');
 				} else if (index == 2) {
-					$repeater.helper.to('../../pages/index/index');
+					let uid = this.$store.state.uid;
+					if (uid != '') {
+						$repeater.helper.to('../../pages/index/index');
+					} else {
+						$repeater.helper.to('../../pages/login/login');
+					}
 				}
-			}
+			},
+			
 		}
 	}
 </script>
@@ -61,6 +75,7 @@
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
+		
 	}
 	.wrapper {
 		width: 250rpx;
