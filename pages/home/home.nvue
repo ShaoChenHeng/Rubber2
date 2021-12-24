@@ -1,6 +1,7 @@
 <template>
 	<view class="page">
-	<scroll-view scroll-y="true" class="scroll-container">
+	<list  class="scroll-container">
+		<cell>
 		<view class="top-wraper" :style="{backgroundImage: `linear-gradient(to bottom, ${get_color}, #121212)`}">
 			<view :style="{ height: statusbar_height + 'px'}" >
 				<!-- 这里是状态栏-->
@@ -10,7 +11,7 @@
 			</view>
 			
 			<view class="button-wrapper">
-				<view class="icon-area config" >
+				<view class="icon-area config" @tap="get_radar_list">
 					<wyy-icon type="&#xe632;" size="45" color="#FFFFFF"></wyy-icon>
 				</view>
 				<view class="icon-area recent" >
@@ -22,28 +23,48 @@
 			</view>
 		</view>
 		
-		<view class="item-title-bar" >
-			<text class="title-text">推荐歌单</text>
+		<view v-if="is_login">
+			<view class="item-title-bar">
+				<text class="title-text"
+				@appear="onappear_recommend_songs(recommend_songs_title)">{{recommend_songs_title}}</text>
+			</view>
+			<slide-bar :list="recommend_songs" :model="'tiny'" :type="'song'"></slide-bar>
 		</view>
-		<slide-bar :list="recomend_list" :model="'large'" :type="'playlist'"></slide-bar>
-			
+		
+		<view class="item-title-bar" >
+			<text class="title-text" 
+			@appear="onappear_recommend_list(recommend_playlist_title)">{{recommend_playlist_title}}</text>
+		</view>
+		<slide-bar :list="recommend_playlist" :model="'large'" :type="'playlist'"></slide-bar>
+		
+		<view class="item-title-bar">
+			<text class="title-text">{{fm_list_title}}</text>
+		</view>
+		<slide-bar :list="fm_list" :model="'tiny'" :type="'song'"></slide-bar>
 
 		<view class="item-title-bar">
-			<text class="title-text">新歌速递</text>
+			<text class="title-text"
+			@appear="onappear_new_songs(new_songs_title)">{{new_songs_title}}</text>
 		</view>
 		<slide-bar :list="new_songs" :model="'tiny'" :type="'song'"></slide-bar>
+		
+		<view class="item-title-bar">
+			<text class="title-text"
+			@appear="onappear_radar_list(radar_list_title)">{{radar_list_title}}</text>
+		</view>
+		<slide-bar :list="radar_list" :model="'large'" :type="'playlist'"></slide-bar>
 
 		<view class="item-title-bar">
-			<text class="title-text">热门专辑</text>
+			<text class="title-text">{{top_albums_title}}</text>
 		</view>
 		<slide-bar :list="top_albums" :model="'large'" :type="'album'"></slide-bar>
 		
-		<view class="item-title-bar">
+		<!-- <view class="item-title-bar">
 			<text class="title-text">最近播放</text>
 		</view>
-		<slide-bar :list="playlist_data"></slide-bar>
-		
-	</scroll-view>
+		<slide-bar :list="playlist_data"></slide-bar> -->
+		</cell>
+	</list>
 		
 		<wyy-play v-if="played"></wyy-play>
 		<BottomBar></BottomBar>
@@ -57,7 +78,7 @@
 	import BottomBar from '@/components/BottomBar.nvue'
 	import wyyPlay from '@/components/wyy-play/wyy_play.nvue';
 	import $repeater from '@/utils/repeater.js';
-
+	const modal = weex.requireModule('modal');
 	export default {
 		components: {
 			slideBar,
@@ -69,96 +90,22 @@
 			return {
 				show_play: false,
 				show_sidebar: false,
+				recommend_playlist_title: '推荐歌单',
+				recommend_songs_title: '每日推荐',
+				new_songs_title: '新歌速递',
+				top_albums_title: '热门专辑',
+				radar_list_title: '您的雷达歌单',
+				fm_list_title: '私人FM',
 				
-				recomend_list:[],
-				new_songs:[],
-				top_albums:[],
-				playlist_data: [  {
-					"id": 4936521153,
-					"coverImgUrl": "https://p2.music.126.net/FloXI2EaIAF7NErvhGJBOw==/109951164851311261.jpg",
-					"name": "LiyuuujiA",
-					"trackCount": 37,
-					"creator": {
-						"nickname": "谢谢品尝煎茶奶绿",
-						"userId": 1785798390,
-						"userType": 0,
-						"avatarUrl": "http://p2.music.126.net/AJ7y6AhCWM6FOxOjQYAw_w==/109951165128330121.jpg",
-						"authStatus": 0,
-						"expertTags": null,
-						"experts": null
-					}
-				},{
-					"id": 5000925826,
-					"coverImgUrl": "https://p2.music.126.net/fpx5pqgjU8WSZsy0xkWbUA==/109951164192475628.jpg",
-					"name": "Li'Y'uuuu",
-					"trackCount": 192,
-					"creator": {
-						"nickname": "鲤鱼是精",
-						"userId": 422724855,
-						"userType": 0,
-						"avatarUrl": "http://p2.music.126.net/zFZm_7gvwuwWFfb85rltJA==/109951163578763086.jpg",
-						"authStatus": 0,
-						"expertTags": null,
-						"experts": null
-					}
-				}, {
-					"id": 7124430985,
-					"coverImgUrl": "https://p2.music.126.net/nxVlQ_YDM-lAeXKGQCJuHA==/109951166720188216.jpg",
-					"name": "liyuu",
-					"trackCount": 6,
-					"creator": {
-						"nickname": "Twilight_zoe",
-						"userId": 246434638,
-						"userType": 0,
-						"avatarUrl": "http://p2.music.126.net/e7UiT8M97u4SKXKL2pZiNQ==/109951163454492947.jpg",
-						"authStatus": 0,
-						"expertTags": null,
-						"experts": null
-					}
-				}, {
-					"id": 7123193787,
-					"coverImgUrl": "https://p2.music.126.net/XpBdeYzQmaRVpXh04ehb8w==/109951166726739388.jpg",
-					"name": "Liella Liyuu",
-					"trackCount": 29,
-					"creator": {
-						"nickname": "无月圆云影",
-						"userId": 131680416,
-						"userType": 0,
-						"avatarUrl": "http://p2.music.126.net/CfNG-O_BsAnpunuFF9N2GQ==/18590542602484184.jpg",
-						"authStatus": 0,
-						"expertTags": null,
-						"experts": null
-					}
-				}, {
-					"id": 6898742798,
-					"coverImgUrl": "https://p2.music.126.net/jB1UW94J8xTuPM1NoR4ZjA==/109951166245809051.jpg",
-					"name": "鲤鱼liyuu",
-					"trackCount": 7,
-					"creator": {
-						"nickname": "山河水墨2006",
-						"userId": 3377415999,
-						"userType": 0,
-						"avatarUrl": "http://p2.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg",
-						"authStatus": 0,
-						"expertTags": null,
-						"experts": null
-					}
-				},  {
-					"id": 7080575785,
-					"coverImgUrl": "https://p2.music.126.net/GUThAoBcskWUBWKD_GLaxg==/18556457743863698.jpg",
-					"name": "Liyuuuuuuuuuuu",
-					"trackCount": 82,
-					"creator": {
-						"nickname": "liyuuuuuuuuuuuuuuu",
-						"userId": 1508792648,
-						"userType": 0,
-						"avatarUrl": "http://p2.music.126.net/fphcnEIgTQh5e-_Qx707Xw==/109951166657763849.jpg",
-						"authStatus": 0,
-						"expertTags": null,
-						"experts": null
-					}
-				}],
-		
+				recommend_playlist: [],
+				recommend_songs: [],
+				radar_list:[],
+				new_songs: [],
+				top_albums: [],
+				fm_list: [],
+				
+				threads: [],
+				is_login: true,
 				tab_index: 0,
 				tabBars: [
 					{name: '我的', id: 'mine'},
@@ -170,6 +117,7 @@
 			}
 		},
 		computed: {
+			
 			played: function() {
 				return this.$store.state.played;
 			},
@@ -206,11 +154,11 @@
 		onBackPress() {
 			$repeater.helper.backgrounder();
 		},
-		
 		created() {
-			this.init_user();
-			this.get_recommend_playlists();
-			this.get_new_songs();
+			setTimeout(()=>{
+				this.check_login();	
+			}, 1000);
+			this.get_fm_list();
 			this.get_top_albums();
 		},
 		onShow() {
@@ -219,8 +167,81 @@
 		onUnload() {
 			
 		},
-		
 		methods: {
+			check_login() {
+				if (this.$store.state.uid != '')
+				{
+					this.is_login = true;
+				} else {
+					this.is_login = false;
+				}
+			},
+			is_item_in_list(list, item) {
+				let counter = 0;
+				for (var i = 0; i < list.length - 1; i ++) {
+					if (list[i] == item){
+						return true;
+					}
+					counter ++;
+					if (counter == list.length - 1) {
+						return false;		
+					}
+				}
+				
+			},
+			remove_item_in_list(list, item) {
+				for ( var i = 0; i < list.length - 1; i ++) { 
+				   if ( list[i] === item) {
+				     list.splice(i, 1); 
+				   }
+				}
+			},
+			onappear_recommend_list(char) {
+				if (this.recommend_playlist.length == 0 && 
+					!this.is_item_in_list(this.threads, 'recommend_list')) {
+						this.threads.push('recommend_list');
+						this.get_recommend_playlists();
+					}
+			},
+			onappear_new_songs(char) {
+				if (this.new_songs.length == 0 && 
+					!this.is_item_in_list(this.threads,'new_songs')) {
+						this.threads.push('new_songs');
+						this.get_new_songs();
+					}
+					
+			},
+			onappear_recommend_songs(char) {
+				if (this.recommend_songs.length == 0 &&
+					!this.is_item_in_list(this.threads, 'recommend_songs')) {
+						this.threads.push('recommend_songs')
+						this.get_recommend_songs();
+					}
+			},
+			onappear_radar_list(char) {
+				if (this.radar_list.length == 0 &&
+					!this.is_item_in_list(this.threads, 'radar_list')) {
+						this.threads.push('radar_list')
+						this.get_radar_list();
+					}
+			},
+			get_recommend_songs() {
+				$repeater.recommend.songs((data)=> {
+					let new_songs = data.data.dailySongs;
+					let format_songs = []
+					new_songs.forEach((item)=> {
+						let format_song = {}
+						format_song.id = item.id;
+						format_song.name = item.name;
+						format_song.artists = item.ar;
+						format_song.picUrl = item.al.picUrl;
+						format_songs.push(format_song);
+					})
+					this.recommend_songs = format_songs;
+					this.remove_item_in_list(this.threads, 'recommend_songs')
+					console.log('get recommend_songs')
+				})
+			},
 			get_recommend_playlists() {
 				$repeater.personalized.playlist((res)=> {
 					let format_lists = []
@@ -232,8 +253,41 @@
 						format_lists.push(format_list)
 					})
 					
-					this.recomend_list = format_lists;
+					this.recommend_playlist = format_lists;
+					this.remove_item_in_list(this.threads, 'recommend_playlist')
+					console.log('get recommend_playlist')
 				}, 6)
+			},
+			get_radar_list() {
+				$repeater.recommend.playlist((data)=> {
+					let radar_list = data.recommend
+					let format_lists = [];
+					radar_list.forEach((item)=>{
+						let format_list = {}
+						format_list.id = item.id;
+						format_list.name = item.name;
+						format_list.coverImgUrl = item.picUrl;
+						format_lists.push(format_list);
+					})
+					this.radar_list = format_lists;
+					this.remove_item_in_list(this.threads, 'radar_list')
+					console.log('get radar_list')
+				});
+			},
+			get_fm_list() {
+				$repeater.recommend.FM((data)=> {
+					let fm_list = data.data;
+					let format_songs = [];
+					fm_list.forEach((item)=>{
+						let format_song = {};
+						format_song.id = item.id;
+						format_song.name = item.name;
+						format_song.artists = item.artists;
+						format_song.picUrl = item.album.blurPicUrl;
+						format_songs.push(format_song);
+					})
+					this.fm_list = format_songs;
+				});
 			},
 			get_new_songs() {
 				$repeater.search.get_new_songs((data)=> {
@@ -249,12 +303,15 @@
 						format_songs.push(format_song);
 					})
 					this.new_songs = format_songs;
+					this.remove_item_in_list(this.threads, 'new_songs')
+					console.log('get new_songs')
 				});
 			},
 			get_top_albums() {
 				$repeater.search.get_top_albums((data)=>{
 					let albums = data.monthData;
-					albums = albums.slice(0, 30);
+					if (albums.length >= 30 )
+						albums = albums.slice(0, 30);
 					let format_albums = []
 					albums.forEach((album) => {
 						let format_album = {}
@@ -266,18 +323,6 @@
 					})
 					this.top_albums = format_albums;
 				})
-			},
-			init_user() {
-				let uid = this.$store.state.uid;
-				$repeater.user.get_user_detail(uid, (user_info)=> {
-					this.$store.commit('set_user_info', user_info)
-				});
-				$repeater.user.get_subcount((data)=> {
-					this.$store.commit('set_subcount', data);
-				});
-				$repeater.user.get_likelist(uid, (data)=> {
-					this.$store.commit('set_likelist', data.ids);
-				});
 			},
 			ontabtap(index) {
 				this.change_tab_index(index);
@@ -302,7 +347,6 @@
 </script>
 
 <style>
-	@import '../../common/wyy.css';
 	.scroll-container{
 		flex: 1;
 	}
@@ -367,11 +411,6 @@
 		width: 100%;
 		overflow: hidden;
 		background-color: #c2c2c2;
-		flex-direction: row;
-	}
-	
-	.scroller-item {
-		display: inline-block;
 		flex-direction: row;
 	}
 	
