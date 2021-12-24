@@ -191,7 +191,6 @@
 				$repeater.album.detail(album_id, (data)=> {
 					let album = data.album;
 					this.album = album;
-					console.log(this.album);
 					this.songs = data.songs;
 				});
 			},

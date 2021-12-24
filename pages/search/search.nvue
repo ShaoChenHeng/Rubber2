@@ -10,7 +10,7 @@
 					<cell class="title">
 						<text class="title-text">热搜榜</text>
 					</cell>
-					<cell class="hot-item" v-for="(item, index) in hot_list.slice(0,10)" :key="index" @tap="hot_search(item)">
+					<cell class="hot-item" v-for="(item, index) in hot_list" :key="index" @tap="hot_search(item)">
 						<view class="hot-item-index">
 							<text class="index-text">{{index + 1}}</text>
 						</view>
@@ -439,11 +439,15 @@
 		margin-top: 15rpx;
 	}
 	.scroll-bar-view {
-		width: 750rpx; height: 135rpx; flex-direction: row;
+		width: 750rpx; 
+		height: 135rpx; flex-direction: row;
 		background-color: #121212;
 	}
 	.scroll-bar {
 		flex-direction: row;
+		width: 750rpx; 
+		border-bottom-width: 4rpx;
+		border-bottom-color: #090909;
 	}
 	.bar-name {
 		justify-content: center;
@@ -461,6 +465,7 @@
 		border-radius: 20px;
 		border-color: rgba(255, 255, 255, .6);
 	}
+	
 	.active-button {
 		border-radius: 20px;
 		height: 64rpx;
