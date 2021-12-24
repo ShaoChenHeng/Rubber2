@@ -1,0 +1,97 @@
+<template>
+	<view class="playlist" @tap="to_playlist">
+			<view class="cover-area">
+				<image class="cover-image"  :src="playlist.coverImgUrl + '?param=136y136'"></image>
+			</view>
+			<view class="playlist-details">
+				<text class="playlist-name">{{playlist.name}}</text>
+				<view class="playlist-creators">
+					<text class="playlist-creator" >{{playlist.creator.nickname}}</text>
+				</view>
+			</view>
+	</view>
+</template>
+
+<script>
+	import $repeater from '@/utils/repeater.js';
+	export default {
+		props: {
+			playlist: {
+				type: Object,
+				default: {
+					
+				}
+			}
+		},
+		data() {
+			return {
+			};
+		},
+		computed: {
+			
+		},
+		methods: {
+			to_playlist() {
+				let playlist = this.playlist;
+				$repeater.helper.to('/pages/playlist/playlist?playlist_id=' + playlist.id + '&cover_image=' + playlist.coverImgUrl + '&name=' + playlist.name);
+			}
+		},
+	}
+</script>
+
+<style>
+	.playlist {
+		flex-direction: row;
+		align-items: center;
+		width: 750rpx;
+		height: 170rpx;
+		background-color: #121212;
+	}
+	.playlist:active{
+		opacity: 0.8;
+	}
+	.cover-area {
+		width: 136rpx;
+		width: 136rpx;
+		justify-content: center;
+		align-items: center;
+		margin-left: 40rpx;	
+		background-color: #007AFF;
+	}
+	.cover-image {
+		width: 136rpx;
+		height: 136rpx;
+	}
+	
+	.playlist-details {
+		margin-left: 25rpx;
+		flex-direction: column;
+		margin-top: 5rpx;
+		
+	}
+	.playlist-name {
+		font-size: 35rpx;
+		font-weight: bold;
+		margin-bottom: 30rpx;	
+		color: #FFFFFF;
+		width: 610rpx;
+		text-overflow: ellipsis;
+		lines: 1;
+	}
+	.playlist-creators {
+		flex-direction: row;
+		text-overflow: ellipsis;
+		color: rgba(255, 255, 255, .6);
+		width: 610rpx;
+		lines: 1;
+	}
+	.playlist-creator {
+		font-size: 30rpx;
+		color: rgba(255, 255, 255, .6);
+		lines: 1;
+		width: 610rpx;
+		text-overflow: ellipsis;
+		lines: 1;
+	}
+
+</style>
