@@ -70,6 +70,7 @@
 				this.$refs.playlist_drawer.open_playlist();
 			},
 			to_play_page() {
+				console.log('hello')
 				$repeater.helper.to('../play/play');
 			},
 			turn(event) {
@@ -143,6 +144,10 @@
 		margin-bottom: 10rpx;
 		font-size: 25rpx;
 		font-weight: bold;
+		width: 430rpx;
+		flex-direction: row;
+		text-overflow: ellipsis;
+		lines: 1;
 		color: #FFFFFF;
 	}
 	.creator-nickname {
@@ -150,6 +155,9 @@
 		margin-left: 25rpx;
 		color: rgba(255, 255, 255, .6);
 		margin-top: 10rpx;
-		
+		width: 430rpx;
+		flex-direction: row;
+		text-overflow: ellipsis;
+		lines: 1;
 	}
 </style>
