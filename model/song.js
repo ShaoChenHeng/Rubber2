@@ -9,8 +9,9 @@ Song.get_song_url = function(id, cb) {
 	request.get(url, params, (res)=> {
 		let data = res.data
 		if (data.code == 200) {
-		  cb && cb(data)
-		} else {
+			
+			cb && cb(data)
+		}else {
 			console.log('failed');
 		}
 	})
@@ -18,6 +19,7 @@ Song.get_song_url = function(id, cb) {
 
 Song.get_lyric = function(id, cb) {
 	let url = config.API.LYRIC;
+	
 	let params = {
 		id: id,
 	}
@@ -25,8 +27,9 @@ Song.get_lyric = function(id, cb) {
 		let data = res.data
 		
 		if (data.code == 200) {
+			
 			cb && cb(data)
-		} else {
+		}else {
 			console.log('failed');
 		}
 	})
@@ -44,7 +47,7 @@ Song.get_song_detail = function(id, cb) {
 		if (data.code == 200) {
 			
 			cb && cb(data)
-		} else {
+		}else {
 			console.log('failed');
 		}
 	})

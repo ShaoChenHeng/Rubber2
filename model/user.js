@@ -118,7 +118,6 @@ User.get_user_detail = function(uid, cb) {
 		
 		let data = res.data;
 		if (data.code == 200) {
-			
 			cb && cb(data)
 		}else {
 			console.log('failed');
@@ -133,7 +132,9 @@ User.get_playlist = function(uid, cb) {
 		uid: uid
 	}
 	request.post(url, params, (res)=> {
+		console.log()
 		let data = res.data;
+		
 		if (data.code == 200) {
 			cb && cb(data)
 		}else {
@@ -179,7 +180,6 @@ function get_status(cb) {
 	let url = config.API.LOGIN_STATUS;
 	
 	request.get(url, {timestamp: ts}, (res)=> {
-		console.log(res)
 		let data = res.data.data;
 		if (data && data.code == 200) {
 			cb && cb(data)
