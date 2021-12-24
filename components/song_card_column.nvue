@@ -1,7 +1,7 @@
 <template>
-	<view class="music"  @tap="play">
-		<view class="wraper">
-		<view class="music-top"  >
+	<view class="music" >
+		<view class="wraper" @tap="play">
+		<view class="music-top" >
 			<image class="cover-image" :src="song.picUrl + '?param=230y230'"></image>
 		</view>
 		
@@ -10,6 +10,9 @@
 			<text class="music-creator-name" v-for="(creator, c_index) in song.artists" :key="c_index">{{creator.name + ' '}}</text>
 			<!-- <text class="number">{{playlist.trackCount}}首 by {{playlist.creator.nickname}}</text> -->
 		</view>
+		</view>
+		<view class="handle-area" v-if="false">
+			
 		</view>
 	</view>
 </template>
@@ -25,7 +28,18 @@
 					
 				}
 			},
-
+			number: {
+				type: Number,
+				default: 0
+			},
+			show_number: {
+				type: Boolean,
+				default: false,
+			},
+			playlist_id: {
+				type: Number,
+				default: 0
+			}
 		},
 		data() {
 			return {
@@ -52,12 +66,10 @@
 				})
 				
 				// 获取相同歌单下的歌曲生成一个播放列表, 如何没有指定歌单id, 那么仅将此首歌push到播放列表中
-				
 				if (this.playlist_id) {
 					let playlist_id = this.playlist_id;
 					$repeater.playlist.get_playlist_detail(playlist_id, (data)=> {
 						let playlist = data.playlist;
-						
 						let format_songs = [];
 						playlist.tracks.forEach((song)=> {
 							let format_song = {};
@@ -77,7 +89,6 @@
 					format_song.name = song.name;
 					format_song.artists = song.artists;
 					format_song.album_name = song.album_name;
-					
 					this.$store.commit('push_current_playlist', format_song);
 				}
 				
@@ -128,9 +139,15 @@
 		font-weight: bold;
 		color: #FFFFFF;
 		padding-bottom: 10rpx;
+		text-overflow: ellipsis;
+		lines: 1;
+		width: 230rpx;
 	}
 	
 	.music-creator-name {
+		text-overflow: ellipsis;
+		lines: 1;
+		width: 230rpx;
 		text-align:center;
 		font-size: 22rpx;
 		color: rgba(255, 255, 255, .6);
