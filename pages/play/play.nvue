@@ -69,9 +69,9 @@
 			<view class="handle-area">
 				<view class="icon-group">
 					<view class="icon-area loop" @tap="change_play_mode">
-						<wyy-icon v-if="play_mode == 'random'" type="&#xe676;" size="50" color="#f0686f"></wyy-icon>
-						<wyy-icon v-if="play_mode == 'sequence'" type="&#xe674;" size="50" color="#f0686f"></wyy-icon>
-						<wyy-icon v-if="play_mode == 'single'" type="&#xe678;" size="50" color="#f0686f"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'random'" type="&#xe676;" size="50" color="#ff0031"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'sequence'" type="&#xe674;" size="50" color="#ff0031"></wyy-icon>
+						<wyy-icon v-if="play_mode == 'single'" type="&#xe678;" size="50" color="#ff0031"></wyy-icon>
 					</view>
 					<view class="icon-area prev" @tap="prev()">
 						<wyy-icon type="&#xe66f;" size="50" color="#FFFFFF"></wyy-icon>
@@ -85,7 +85,7 @@
 					</view>
 					<view class="icon-area" @tap="like($event)">
 						<wyy-icon :type="islike ? '&#xe720;' : '&#xe607;'" size="50"
-							:color="islike ? '#f0686f' : '#FFFFFF'"></wyy-icon>
+							:color="islike ? '#f23333' : '#FFFFFF'"></wyy-icon>
 					</view>
 				</view>
 			</view>
@@ -185,7 +185,10 @@
 			},
 			play_mode() {
 				return this.$store.state.play_mode;
-			}
+			},
+			statusbar_height() {
+				return $repeater.config.status_bar_height
+			},
 		},
 		watch: {
 			played(value) {
@@ -385,7 +388,6 @@
 		right: -50px;
 		bottom: -50px;
 		background: center no-repeat;
-		background-size: cover;
 		opacity: 0.3;
 	}
 	
