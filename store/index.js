@@ -25,7 +25,6 @@ const store = new Vuex.Store({
 			})
 			console.log(index)
 			if (index === -1) {
-				console.log('in push');
 				state.current_playlist.push(item);
 				Storage.set_current_playlist(state.current_playlist);	
 			}			
