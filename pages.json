@@ -1,19 +1,133 @@
 {
 	"pages": [{
-		"path": "pages/play/play",
-		"style": {
-			"app-plus": {
-				"titleNView": "false"
-					
-				
+			"path": "pages/welcome/welcome",
+			"style": {
+				"titleNView": false
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"app-plus": {
+					"titleNView": false,
+					"animationDuration":300,
+					"animationType":"fade-in"
+				}
+			}
+
+		},
+		{
+			"path": "pages/home/home",
+			"style": {
+				"navigationBarTitleText": "主页",
+				"app-plus": {
+					"titleNView": false,
+					"animationType":"fade-in",
+					"animationDuration":300				
+				}
+			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"titleNView": false,
+				"backgroundColor": "rgba(18, 18, 18, 0.3)",
+				"app-plus": {
+					"animationType":"fade-in",
+					"animationDuration":300,
+					"bounce": "none",
+					"subNVues": [{
+						"id": "search_nav_bar",
+						"path": "subNVue/search_nav_bar",
+
+						"style": {
+							"position": "dock",
+							"dock": "top",
+							"height": "180rpx"
+						}
+					}]
+				}
+			}
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"titleNView": false,
+				"animationType":"fade-in",
+				"animationDuration":300	
+			}
+		}, 
+		{
+			"path": "pages/login/phone",
+			"style": {
+				"navigationBarTitleText": "手机号登录",
+				"titleNView": {
+					"titleAlign": "left",
+					"backgroundColor": "#e63e43",
+					"titleColor": "#FFFFFF"
+				}
+			}
+		}, {
+			"path": "pages/login/password",
+			"style": {
+				"navigationBarTitleText": "手机号密码登录",
+				"titleNView": {
+					"titleAlign": "left",
+					"backgroundColor": "#e63e43",
+					"titleColor": "#FFFFFF"
+				}
+			}
+		}, 
+		{
+			"path": "pages/login/password",
+			"style": {
+				"navigationBarTitleText": "手机号密码登录",
+				"titleNView": {
+					"titleAlign": "left",
+					"backgroundColor": "#e63e43",
+					"titleColor": "#FFFFFF"
+				}
+			}
+		}, 
+
+		{
+			"path": "pages/playlist/playlist",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, 
+		{
+			"path": "pages/play/play",
+			"style": {
+				"titleNView": false,
+				"app-plus": {
+					"animationType": "slide-in-bottom",
+					"animationDuration":300
+				}
+			}
+		}, 
+		{
+			"path": "pages/album/album",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
 			}
 		}
-	}],
-
+    ],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#121212"
+	},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "", //模式名称
+				"path": "", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
 	}
 }
