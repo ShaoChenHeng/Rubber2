@@ -50,7 +50,6 @@
 		/* justify-content: space-between; */
 		height: 420rpx;
 		width: 375rpx;
-		
 		padding-left: 30rpx;
 		padding-right: 30rpx;
 		
@@ -109,6 +108,10 @@
 		font-weight: bold;
 		color: #FFFFFF;
 		padding-bottom: 15rpx;
+		
+		text-overflow: ellipsis;
+		lines: 1;
+		width: 330rpx;
 	}
 	
 	.music-list-name-tiny{
@@ -117,6 +120,9 @@
 		font-weight: bold;
 		color: #FFFFFF;
 		padding-bottom: 15rpx;
+		text-overflow: ellipsis;
+		lines: 1;
+		width: 330rpx;
 	}
 	
 	.number{
