@@ -11,10 +11,9 @@ import search from '../model/search.js';
 import other from '../model/other.js';
 import album from '../model/album.js';
 import personalized from '../model/personalized.js';
-import top from '../model/top.js';
-import video from '../model/video.js';
+import recommend from '../model/recommend.js';
 
-export default{ 
+export default{
 	config,
 	helper,
 	user,
@@ -26,6 +25,6 @@ export default{
 	other,
 	album,
 	personalized,
-	top,
-	video
+	recommend,
+
 }
