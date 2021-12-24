@@ -2,9 +2,9 @@
 	<div class="sub_page">
 		<view style="width: 750rpx;" :style="{ height: statusbar_height + 'px'}"></view>
 		<view class="search-bar">
-			<!-- <view class="back">
-				<wyy-icon @tap="back" type="&#xe66a;" size="45" color="#FFFFFF" ></wyy-icon>
-			</view> -->
+			<view class="back" @tap="back">
+				<wyy-icon type="&#xe6a7;" size="45" color="#FFFFFF" ></wyy-icon>
+			</view>
 			<view class="search-input-area">
 				<input @confirm="search" confirm-type="search" placeholder-class="input-placeholder" @input="on_input" v-model="input_content" type="text" class="input" placeholder="请输入搜索关键词" />
 			</view>
@@ -50,6 +50,10 @@
 			
 		},
 		methods: {
+			back() {
+				uni.hideKeyboard();
+				uni.$emit('back');
+			},
 			search() {
 				uni.$emit('search', {keyword: this.input_content});
 			},
@@ -83,7 +87,7 @@
 		/* width: 450rpx; */
 		flex: 1;
 		padding: 10rpx 0;
-		margin-left:100rpx;
+		margin-left:5rpx;
 		justify-content: center;
 
 	}
