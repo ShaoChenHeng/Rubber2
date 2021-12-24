@@ -72,7 +72,6 @@ PlayerHelper.start = function(song_id, cb) {
 	let played = Storage.get_played();
 	
 	Song.get_song_detail(song_id, (data)=> {
-		console.log(data);
 		let song = data.songs[0];
 		let song_name = song.name;
 		let cover_image = song.al.picUrl;
@@ -90,24 +89,19 @@ PlayerHelper.start = function(song_id, cb) {
 			// this.turn();
 			let routes = getCurrentPages();
 			let curRoute = routes[routes.length - 1].route;
-			if (curRoute != 'pages/play/play') Helper.to('../play/play');	
-			
+			if (curRoute != 'pages/play/play') Helper.to('../play/play');
 			return;
 		}
 		
 		Song.get_song_url(song_id, (res)=> {
-			console.log(res);
 			let url = res.data[0].url;
-			console.log(url);
 			if (!url) {
 				setTimeout(function() {
 					Helper.toast('none', '亲爱的, 暂无该歌曲资源~', 3000, false, 'bottom');
 				}, 10);
 				return;
 			}
-			
-			
-			
+	
 			let creators = song.ar;
 			let creator_str = '';
 			

@@ -5,7 +5,7 @@ let Storage = {}
 const LATEST_PLAYED = 'latest_played'; //最后一个播放记录
 const CURRENT_PLAYLIST = 'current_playlist'; // 当前播放列表
 const IS_LOGIN = 'is_login'; // 登录状态
-const PLAY_MODE = 'play_mode'; // 播放模式
+const PLAY_MODE = 'play_mode';
 
 Storage.is_login = function() {
 	return get(IS_LOGIN);
@@ -43,19 +43,19 @@ Storage.set_play_mode = function(v) {
 }
 
 function set(k, v) {
-  try {
-    uni.setStorageSync(k, v);
-  } catch (e) {
-    // error
-  }
-  return;
+	try {
+	    uni.setStorageSync(k, v);
+	} catch (e) {
+	    // error
+	}
+	return;
 }
 
 function get(k) {
 	try {
-	  return uni.getStorageSync(k);
+	    return uni.getStorageSync(k);
 	} catch (e) {
-	  console.log(e);
+	    console.log(e);
 	}
 }
 
