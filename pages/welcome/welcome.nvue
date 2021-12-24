@@ -30,26 +30,27 @@
 					});	
 				}, 1500);
 				
-				/* $repeater.user.check_login((user_status)=> {
-					console.log(user_status);
+				$repeater.user.check_login((user_status)=> {
 					if (user_status && $repeater.storage.is_login()) { // 已登录
 						let uid = user_status.profile.userId;
 						this.$store.commit('set_uid', uid);
-						
-						setTimeout(function() {
-							
-						}, 1500);
-						
-					}else { // 未登录
-						setTimeout(function() {
-							uni.redirectTo({
-								url: '../login/login',
-							});
-						}, 1500);
+						this.init_user();
 					}
-					
-				}); */
-			}
+				});
+			},
+			init_user() {
+				let uid = this.$store.state.uid;
+				$repeater.user.get_user_detail(uid, (user_info)=> {
+					this.$store.commit('set_user_info', user_info)
+				});
+				$repeater.user.get_subcount((data)=> {
+					this.$store.commit('set_subcount', data);
+				});
+				$repeater.user.get_likelist(uid, (data)=> {
+					this.$store.commit('set_likelist', data.ids);
+				});
+			},
+
 		}
 	}
 </script>
