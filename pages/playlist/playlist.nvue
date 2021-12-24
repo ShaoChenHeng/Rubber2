@@ -59,7 +59,7 @@
 
 					
 					<view class="size-area">
-						<text class="size-text">共{{playlist.trackCount}}首</text>
+						<text class="size-text">共 {{trackCount}} 首</text>
 					</view>
 					
 					<view class="icon-wraper">
@@ -110,6 +110,7 @@
 				image_slide_length: 430, 
 				avatarUrl: '',
 				nickname:'',
+				trackCount:'',
 				playlist_id: '',
 				mode_class: ['fade'],
 				tmp_name: '',
@@ -172,6 +173,7 @@
 					let playlist = data.playlist.tracks;
 					this.avatarUrl = data.playlist.creator.avatarUrl;
 					this.nickname = data.playlist.creator.nickname;
+					this.trackCount =  data.playlist.trackCount
 					if (playlist) {
 						let format_songs = [];
 						playlist.forEach((song)=>{
