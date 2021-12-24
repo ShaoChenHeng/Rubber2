@@ -15,6 +15,7 @@ function played_watch(cb) {
 	})
 }
 
+
 function backgrounder() {
 	let os = plus.os.name.toLocaleLowerCase() == 'android' ? 'android' : 'ios';
 	if (os == 'android') {
@@ -23,13 +24,17 @@ function backgrounder() {
 	}
 }
 
+
+
 function to(url, mode) {
 	mode = mode || 'navigate_to';
+
 
 	uni.navigateTo({
 		url: url
 	});
 }
+
 
 function toast(icon, text, duration, mask, position) {
 	duration = duration || 1500;
@@ -44,9 +49,11 @@ function toast(icon, text, duration, mask, position) {
 	})
 }
 
+
 export default {
 	to,
 	toast,
 	backgrounder,
-	played_watch,	
+	played_watch,
+	
 }
