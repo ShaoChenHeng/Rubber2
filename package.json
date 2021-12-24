@@ -14,6 +14,7 @@
   "author": "scheng",
   "license": "GPL",
   "dependencies": {
+    "colorfulimg": "^1.0.2",
     "weex-bindingx": "^0.0.49",
     "weex-ui": "^0.8.6",
     "weex-vue-render": "^0.10.3"
